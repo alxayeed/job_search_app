@@ -6,14 +6,23 @@ version: 0.1.0
 environment:
   sdk: '>=3.3.4 <4.0.0'
 
+
 dependencies:
   flutter:
     sdk: flutter
+  flutter_bloc: ^8.1.6
+  equatable: ^2.0.5
+  dio: 5.7.0  # For handling API requests
+  get_it: ^7.7.0  # For dependency injection
+  dartz: ^0.10.1  # For functional programming constructs
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  bloc_test: ^9.1.7
+  mockito: ^5.4.4
+  build_runner: ^2.4.9
 
 flutter:
   uses-material-design: true
