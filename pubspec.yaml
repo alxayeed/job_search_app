@@ -15,7 +15,13 @@ dependencies:
   dio: 5.7.0  # For handling API requests
   get_it: ^7.7.0  # For dependency injection
   dartz: ^0.10.1  # For functional programming constructs
-
+  dio_smart_retry: ^6.0.0
+  flutter_dotenv: ^5.1.0
+  http: ^1.2.2
+  url_launcher: ^6.3.0
+  flutter_svg: ^2.0.10+1
+  lottie: ^3.1.2
+  firebase_core: ^3.4.0
 
 dev_dependencies:
   flutter_test:
@@ -26,3 +32,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - .env
+    - assets/loading.json
