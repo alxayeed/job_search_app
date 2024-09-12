@@ -10,14 +10,52 @@ class JobSearchScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Job Search'),
-        backgroundColor: Colors.blueAccent,
-        foregroundColor: Colors.white,
-        centerTitle: true,
-        elevation: 0,
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) => [
+          SliverAppBar(
+            expandedHeight: 100.0,
+            pinned: true,
+            floating: false,
+            centerTitle: true,
+            backgroundColor: Colors.blueAccent,
+            title: Text(
+              'Job Search',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.white,
+              ),
+            ),
+            flexibleSpace: FlexibleSpaceBar(
+              background: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.blueAccent, Colors.lightBlue],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+              ),
+            ),
+            elevation: 5,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+                bottom: Radius.circular(20),
+              ),
+            ),
+            leading: Icon(Icons.menu, color: Colors.white,),
+            actions: [
+              IconButton(
+                icon: Icon(Icons.notifications, color: Colors.white),
+                onPressed: () {
+                  // Action for notifications icon
+                },
+              ),
+            ],
+          ),
+        ],
+        body: JobSearchBody(), // Main content goes here
       ),
-      body: JobSearchBody(),
     );
   }
 }
@@ -28,7 +66,7 @@ class JobSearchBody extends StatefulWidget {
 }
 
 class _JobSearchBodyState extends State<JobSearchBody> {
-  final TextEditingController _queryController = TextEditingController();
+  final TextEditingController _queryController = TextEditingController(text: "Software Engineer");
   bool _remoteJobsOnly = false;
   String _employmentType = 'FULLTIME';
   String _datePosted = 'all';
@@ -37,112 +75,7 @@ class _JobSearchBodyState extends State<JobSearchBody> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          padding: EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
-            color: Colors.blueAccent,
-            borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(20.0),
-            ),
-          ),
-          child: Column(
-            children: [
-              TextField(
-                controller: _queryController,
-                onTapOutside: (event) {
-                  FocusManager.instance.primaryFocus?.unfocus();
-                },
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintText: 'Search your next Job...',
-                  suffixIcon: Icon(Icons.search, color: Colors.blueAccent),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-                ),
-                onSubmitted: (_) => _searchJobs(),
-              ),
-              SizedBox(height: 10),
-              Row(
-                children: [
-                  Expanded(
-                    child: FilterChip(
-                      label: Text('Remote Jobs Only'),
-                      selected: _remoteJobsOnly,
-                      onSelected: (bool selected) {
-                        setState(() {
-                          _remoteJobsOnly = selected;
-                        });
-                      },
-                      backgroundColor: Colors.white,
-                      selectedColor: Colors.blueAccent.withOpacity(0.2),
-                      checkmarkColor: Colors.blueAccent,
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: DropdownButtonFormField<String>(
-                      value: _employmentType,
-                      items: [
-                        DropdownMenuItem(
-                          child: Text('Full-Time'),
-                          value: 'FULLTIME',
-                        ),
-                        DropdownMenuItem(
-                          child: Text('Part-Time'),
-                          value: 'PARTTIME',
-                        ),
-                        DropdownMenuItem(
-                          child: Text('Contract'),
-                          value: 'CONTRACT',
-                        ),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          _employmentType = value!;
-                        });
-                      },
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: _searchJobs,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.blueAccent,
-                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                  // shape: RoundedRectangleBorder(
-                  //   borderRadius: BorderRadius.circular(30.0),
-                  // ),
-                  side: BorderSide(color: Colors.blueAccent),
-                ),
-                child: Text(
-                  'Search',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        _buildFloatingFilters(),
         Expanded(
           child: BlocBuilder<JobSearchBloc, JobSearchState>(
             builder: (context, state) {
@@ -150,38 +83,200 @@ class _JobSearchBodyState extends State<JobSearchBody> {
                 return Center(
                   child: Lottie.asset(
                     'assets/loading.json',
-                    width: 300,
-                    height: 300,
+                    width: 200,
+                    height: 200,
                   ),
                 );
               } else if (state is JobSearchError) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.error_outline, color: Colors.red, size: 48),
-                      SizedBox(height: 8),
-                      Text(
-                        'Something went wrong!',
-                        style: TextStyle(fontSize: 18, color: Colors.red),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        state.failure.toString(),
-                        style: TextStyle(color: Colors.grey),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                );
+                return _buildErrorState(state);
               } else if (state is JobSearchLoaded) {
                 return JobListWidget(jobs: state.jobs);
               }
-              return Center(child: Text('Start your job search'));
+              return Center(
+                child: Text(
+                  'Start your job search',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+              );
             },
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildFloatingFilters() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(16, 16, 16, 16),
+      margin: EdgeInsets.only(top: 10),
+      child: Material(
+        elevation: 10,
+        borderRadius: BorderRadius.circular(20),
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Search Box
+              TextField(
+                controller: _queryController,
+                onTapOutside: (event) {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                },
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.grey[100],
+                  hintText: 'Search your next Job...',
+                  prefixIcon: Icon(Icons.search, color: Colors.blueAccent),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+                ),
+                onSubmitted: (_) => _searchJobs(),
+              ),
+              SizedBox(height: 10),
+
+              // Remote Jobs Filter
+              SwitchListTile(
+                title: Text('Remote Jobs Only', style: TextStyle(color: Colors.blueAccent)),
+                value: _remoteJobsOnly,
+                onChanged: (bool selected) {
+                  setState(() {
+                    _remoteJobsOnly = selected;
+                  });
+                },
+                activeColor: Colors.blueAccent,
+                contentPadding: EdgeInsets.zero,
+              ),
+              SizedBox(height: 10),
+
+              // Employment Type Filter
+              DropdownButtonFormField<String>(
+                value: _employmentType,
+                items: [
+                  DropdownMenuItem(
+                    child: Text('Full-Time', style: TextStyle(color: Colors.blueAccent)),
+                    value: 'FULLTIME',
+                  ),
+                  DropdownMenuItem(
+                    child: Text('Part-Time', style: TextStyle(color: Colors.blueAccent)),
+                    value: 'PARTTIME',
+                  ),
+                  DropdownMenuItem(
+                    child: Text('Contract', style: TextStyle(color: Colors.blueAccent)),
+                    value: 'CONTRACT',
+                  ),
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    _employmentType = value!;
+                  });
+                },
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.grey[100],
+                  contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+              SizedBox(height: 10),
+
+              // Date Posted Filter
+              DropdownButtonFormField<String>(
+                value: _datePosted,
+                items: [
+                  DropdownMenuItem(
+                    child: Text('All', style: TextStyle(color: Colors.blueAccent)),
+                    value: 'all',
+                  ),
+                  DropdownMenuItem(
+                    child: Text('Today', style: TextStyle(color: Colors.blueAccent)),
+                    value: 'today',
+                  ),
+                  DropdownMenuItem(
+                    child: Text('3 Days', style: TextStyle(color: Colors.blueAccent)),
+                    value: '3days',
+                  ),
+                  DropdownMenuItem(
+                    child: Text('Week', style: TextStyle(color: Colors.blueAccent)),
+                    value: 'week',
+                  ),
+                  DropdownMenuItem(
+                    child: Text('Month', style: TextStyle(color: Colors.blueAccent)),
+                    value: 'month',
+                  ),
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    _datePosted = value!;
+                  });
+                },
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.grey[100],
+                  contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+              SizedBox(height: 10),
+
+              // Search Button
+              Center(
+                child: ElevatedButton(
+                  onPressed: _searchJobs,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    elevation: 5,
+                  ),
+                  child: Text(
+                    'Search',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorState(JobSearchError state) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.error_outline, color: Colors.red, size: 48),
+          SizedBox(height: 8),
+          Text(
+            'Something went wrong!',
+            style: TextStyle(fontSize: 18, color: Colors.red),
+          ),
+          SizedBox(height: 4),
+          Text(
+            state.failure.toString(),
+            style: TextStyle(color: Colors.grey),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 
