@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
+import '../../domain/entities/job_entity.dart';
 import '../blocs/job_search_bloc.dart';
 import '../blocs/job_search_event.dart';
 import '../blocs/job_search_state.dart';
-import '../widgets/job_list_widget.dart';
+import '../widgets/job_card.dart';
 import 'package:ionicons/ionicons.dart';
 
 class JobSearchScreen extends StatelessWidget {
@@ -95,7 +96,14 @@ class _JobSearchBodyState extends State<JobSearchBody> {
               } else if (state is JobSearchError) {
                 return _buildErrorState(state);
               } else if (state is JobSearchLoaded) {
-                return JobListWidget(jobs: state.jobs);
+                return ListView.builder(
+                  padding: EdgeInsets.all(16.0),
+                  itemCount: state.jobs.length,
+                  itemBuilder: (context, index) {
+                    final JobEntity job = state.jobs[index];
+                    return JobCard(job: job);
+                  },
+                );
               }
               return Center(
                 child: Text(
