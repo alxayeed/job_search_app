@@ -55,7 +55,7 @@ class JobRepositoryImpl implements JobRepository {
           await remoteDataSource.getJobDetails(jobId);
 
       // Convert the JSON response into a [JobModel] object.
-      final JobModel jobModel = JobModel.fromJson(result['data']);
+      final JobModel jobModel = JobModel.fromJson(result['data'][0]);
 
       // Convert the [JobModel] to a [JobEntity].
       final JobEntity jobEntity = jobModel.toEntity();

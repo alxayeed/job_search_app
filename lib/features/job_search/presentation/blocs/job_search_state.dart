@@ -30,3 +30,23 @@ class JobSearchError extends JobSearchState {
   @override
   List<Object> get props => [failure];
 }
+
+class JobDetailsLoading extends JobSearchState {}
+
+class JobDetailsLoaded extends JobSearchState {
+  final JobEntity job;
+
+  JobDetailsLoaded({required this.job});
+
+  @override
+  List<Object> get props => [job];
+}
+
+class JobDetailsError extends JobSearchState {
+  final JobFailure failure;
+
+  JobDetailsError(this.failure);
+
+  @override
+  List<Object> get props => [failure];
+}

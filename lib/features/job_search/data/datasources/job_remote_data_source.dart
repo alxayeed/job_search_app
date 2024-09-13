@@ -27,7 +27,7 @@ class JobRemoteDataSource implements JobDataSource {
     final Uri uri = Uri.parse(ApiConfig.searchJobs).replace(
       queryParameters: {
         'query': query,
-        'num_pages': '10',
+        'num_pages': '1',
         'remote_jobs_only': remoteJobsOnly.toString(),
         'employment_types': employmentType,
         'date_posted': datePosted,
@@ -51,32 +51,26 @@ class JobRemoteDataSource implements JobDataSource {
   }
 
   @override
-  Future<Map<String, dynamic>> getJobDetails(String jobId) {
-    // TODO: implement getJobDetails
-    throw UnimplementedError();
-  }
+  Future<Map<String, dynamic>> getJobDetails(String jobId) async {
+    final Uri uri = Uri.parse(ApiConfig.getJobDetails).replace(
+      queryParameters: {
+        'job_id': jobId,
+      },
+    );
 
-  // @override
-  // Future<Map<String, dynamic>> getJobDetails(String jobId) async {
-  //   final Uri uri = Uri.parse(ApiConfig.getJobDetails).replace(
-  //     queryParameters: {
-  //       'job_id': jobId,
-  //     },
-  //   );
-  //
-  //   try {
-  //     final response = await dio.getUri(uri);
-  //
-  //     if (response.statusCode == 200) {
-  //       // Return the response data
-  //       return response.data;
-  //     } else {
-  //       // Handle error
-  //       throw Exception('Failed to load job details');
-  //     }
-  //   } catch (e) {
-  //     // Handle exceptions
-  //     throw Exception('Failed to load job details: $e');
-  //   }
-  // }
+    try {
+      final response = await dio.getUri(uri);
+
+      if (response.statusCode == 200) {
+        // Return the response data
+        return response.data;
+      } else {
+        // Handle error
+        throw Exception('Failed to load job details');
+      }
+    } catch (e) {
+      // Handle exceptions
+      throw Exception('Failed to load job details: $e');
+    }
+  }
 }

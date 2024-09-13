@@ -4,6 +4,7 @@ import '../../features/job_search/data/datasources/job_remote_data_source.dart';
 import '../../features/job_search/data/repositories/job_repository_impl.dart';
 import '../../features/job_search/domain/repositories/job_repository.dart';
 import '../../features/job_search/domain/usecases/fetch_job_use_case.dart';
+import '../../features/job_search/domain/usecases/get_job_details_use_case.dart';
 import '../../features/job_search/presentation/blocs/job_search_bloc.dart';
 import '../services/dio_service.dart';
 
@@ -23,7 +24,11 @@ Future<void> init() async {
 
   // Initialize use cases
   sl.registerLazySingleton(() => FetchJobsUseCase(sl<JobRepository>()));
+  sl.registerLazySingleton(() => GetJobDetailsUseCase(sl<JobRepository>()));
 
   // Initialize BLoC
-  sl.registerFactory(() => JobSearchBloc(searchJobs: sl<FetchJobsUseCase>()));
+  sl.registerFactory(() => JobSearchBloc(
+        searchJobs: sl<FetchJobsUseCase>(),
+        getJobDetailsUseCase: sl<GetJobDetailsUseCase>(),
+      ));
 }

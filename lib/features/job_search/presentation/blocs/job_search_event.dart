@@ -21,3 +21,12 @@ class SearchJobsEvent extends JobSearchEvent {
   @override
   List<Object> get props => [query, remoteJobsOnly, employmentType, datePosted];
 }
+
+class JobDetailsRequested extends JobSearchEvent {
+  final String jobId;
+
+  JobDetailsRequested({required this.jobId});
+
+  @override
+  List<Object> get props => [jobId];
+}
