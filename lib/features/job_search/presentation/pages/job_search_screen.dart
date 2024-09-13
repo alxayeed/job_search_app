@@ -5,6 +5,7 @@ import '../blocs/job_search_bloc.dart';
 import '../blocs/job_search_event.dart';
 import '../blocs/job_search_state.dart';
 import '../widgets/job_list_widget.dart';
+import 'package:ionicons/ionicons.dart';
 
 class JobSearchScreen extends StatelessWidget {
   @override
@@ -43,10 +44,13 @@ class JobSearchScreen extends StatelessWidget {
                 bottom: Radius.circular(20),
               ),
             ),
-            leading: Icon(Icons.menu, color: Colors.white,),
+            leading: Icon(
+              Icons.menu,
+              color: Colors.white,
+            ),
             actions: [
               IconButton(
-                icon: Icon(Icons.notifications, color: Colors.white),
+                icon: Icon(Ionicons.heart, color: Colors.white),
                 onPressed: () {
                   // Action for notifications icon
                 },
@@ -66,7 +70,8 @@ class JobSearchBody extends StatefulWidget {
 }
 
 class _JobSearchBodyState extends State<JobSearchBody> {
-  final TextEditingController _queryController = TextEditingController(text: "Software Engineer");
+  final TextEditingController _queryController =
+      TextEditingController(text: "Software Engineer");
   bool _remoteJobsOnly = false;
   String _employmentType = 'FULLTIME';
   String _datePosted = 'all';
@@ -133,7 +138,8 @@ class _JobSearchBodyState extends State<JobSearchBody> {
                     borderRadius: BorderRadius.circular(30.0),
                     borderSide: BorderSide.none,
                   ),
-                  contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 0, horizontal: 20),
                 ),
                 onSubmitted: (_) => _searchJobs(),
               ),
@@ -141,7 +147,8 @@ class _JobSearchBodyState extends State<JobSearchBody> {
 
               // Remote Jobs Filter
               SwitchListTile(
-                title: Text('Remote Jobs Only', style: TextStyle(color: Colors.blueAccent)),
+                title: Text('Remote Jobs Only',
+                    style: TextStyle(color: Colors.blueAccent)),
                 value: _remoteJobsOnly,
                 onChanged: (bool selected) {
                   setState(() {
@@ -158,15 +165,18 @@ class _JobSearchBodyState extends State<JobSearchBody> {
                 value: _employmentType,
                 items: [
                   DropdownMenuItem(
-                    child: Text('Full-Time', style: TextStyle(color: Colors.blueAccent)),
+                    child: Text('Full-Time',
+                        style: TextStyle(color: Colors.blueAccent)),
                     value: 'FULLTIME',
                   ),
                   DropdownMenuItem(
-                    child: Text('Part-Time', style: TextStyle(color: Colors.blueAccent)),
+                    child: Text('Part-Time',
+                        style: TextStyle(color: Colors.blueAccent)),
                     value: 'PARTTIME',
                   ),
                   DropdownMenuItem(
-                    child: Text('Contract', style: TextStyle(color: Colors.blueAccent)),
+                    child: Text('Contract',
+                        style: TextStyle(color: Colors.blueAccent)),
                     value: 'CONTRACT',
                   ),
                 ],
@@ -178,7 +188,8 @@ class _JobSearchBodyState extends State<JobSearchBody> {
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.grey[100],
-                  contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
                     borderSide: BorderSide.none,
@@ -192,23 +203,28 @@ class _JobSearchBodyState extends State<JobSearchBody> {
                 value: _datePosted,
                 items: [
                   DropdownMenuItem(
-                    child: Text('All', style: TextStyle(color: Colors.blueAccent)),
+                    child:
+                        Text('All', style: TextStyle(color: Colors.blueAccent)),
                     value: 'all',
                   ),
                   DropdownMenuItem(
-                    child: Text('Today', style: TextStyle(color: Colors.blueAccent)),
+                    child: Text('Today',
+                        style: TextStyle(color: Colors.blueAccent)),
                     value: 'today',
                   ),
                   DropdownMenuItem(
-                    child: Text('3 Days', style: TextStyle(color: Colors.blueAccent)),
+                    child: Text('3 Days',
+                        style: TextStyle(color: Colors.blueAccent)),
                     value: '3days',
                   ),
                   DropdownMenuItem(
-                    child: Text('Week', style: TextStyle(color: Colors.blueAccent)),
+                    child: Text('Week',
+                        style: TextStyle(color: Colors.blueAccent)),
                     value: 'week',
                   ),
                   DropdownMenuItem(
-                    child: Text('Month', style: TextStyle(color: Colors.blueAccent)),
+                    child: Text('Month',
+                        style: TextStyle(color: Colors.blueAccent)),
                     value: 'month',
                   ),
                 ],
@@ -220,7 +236,8 @@ class _JobSearchBodyState extends State<JobSearchBody> {
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.grey[100],
-                  contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
                     borderSide: BorderSide.none,
