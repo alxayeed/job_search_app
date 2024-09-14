@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:job_search_app/core/constants/app_strings.dart';
 import 'package:lottie/lottie.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart'; // For launching URLs
 import '../../domain/entities/job_entity.dart';
 import '../blocs/job_search_bloc.dart';
@@ -26,7 +27,7 @@ class JobDetailsScreen extends StatelessWidget {
     final jobSearchBloc = sl<JobSearchBloc>();
 
     // Trigger the event for fetching job details
-    jobSearchBloc.add(JobDetailsRequested(jobId: job.jobId));
+    jobSearchBloc.add(JobDetailsRequested(jobId: job.jobId)); // jobId is non-nullable
 
     return BlocProvider.value(
       value: jobSearchBloc,
@@ -36,6 +37,26 @@ class JobDetailsScreen extends StatelessWidget {
           backgroundColor: Colors.blueAccent,
           foregroundColor: Colors.white,
           title: Text('${job.jobTitle ?? AppStrings.notApplicable}'),
+          actions: [
+            IconButton(
+              onPressed: () {
+                if (job.jobApplyLink != null) {
+                  // Share the job apply link using the Share Plus package
+                  Share.share(
+                    job.jobApplyLink!,
+                    subject: 'Check out this job: ${job.jobTitle}',
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Job link is not available')),
+                  );
+                }
+              },
+              icon: Icon(
+                Ionicons.share_social_outline,
+              ),
+            ),
+          ],
         ),
         body: Stack(
           children: [
@@ -100,7 +121,7 @@ class JobDetailsScreen extends StatelessWidget {
                           ShowFieldInfo(
                             fieldName: 'Salary:',
                             value:
-                            '${job.jobSalaryCurrency} per ${job.jobSalaryPeriod}',
+                            '${job.jobSalaryCurrency ?? ''} per ${job.jobSalaryPeriod ?? ''}',
                           ),
                         if (job.jobHighlights?.qualifications != null)
                           Column(
@@ -112,29 +133,27 @@ class JobDetailsScreen extends StatelessWidget {
                                     fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                               for (var qualification
-                              in job.jobHighlights!.qualifications!)
-                                Text('- $qualification'),
+                              in job.jobHighlights?.qualifications ?? [])
+                                Text('- ${qualification ?? 'N/A'}'),
                             ],
                           ),
-
-                        if (job.jobHighlights?.responsibilities != null)
-                          SizedBox(
-                              height: 10),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Responsibilities:',
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                              for (var responsibility
-                              in job.jobHighlights!.responsibilities!)
-                                Text('- $responsibility'),
-                            ],
-                          ),
-                        SizedBox(
-                            height: 10),
+                        if (job.jobHighlights?.responsibilities != null &&
+                            job.jobHighlights!.responsibilities!.isNotEmpty)
+                          SizedBox(height: 10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Responsibilities:',
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            for (var responsibility
+                            in job.jobHighlights?.responsibilities ?? [])
+                              Text('- ${responsibility ?? 'N/A'}'),
+                          ],
+                        ),
+                        SizedBox(height: 10),
                         ShowFieldInfo(
                           fieldName: 'Employment Type:',
                           value: job.jobEmploymentType ?? 'N/A',
@@ -160,7 +179,7 @@ class JobDetailsScreen extends StatelessWidget {
                               : 'N/A',
                         ),
                         SizedBox(
-                            height: 80),// To ensure button does not overlap
+                            height: 80), // To ensure button does not overlap
                       ],
                     ),
                   );
@@ -179,7 +198,7 @@ class JobDetailsScreen extends StatelessWidget {
                       left: 0,
                       right: 0,
                       child: Container(
-                        padding: const EdgeInsets.all(0.0),
+                        padding: const EdgeInsets.only(right: 8.0),
                         color: Colors.white,
                         child: Row(
                           children: [
@@ -203,13 +222,7 @@ class JobDetailsScreen extends StatelessWidget {
                                 },
                               ),
                             ),
-                            IconButton(
-                              onPressed: () {},
-                              icon: Icon(
-                                Ionicons.share_social_outline,
-                                size: 30,
-                              ),
-                            ),
+
                           ],
                         ),
                       ),
@@ -225,4 +238,3 @@ class JobDetailsScreen extends StatelessWidget {
     );
   }
 }
-
