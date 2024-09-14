@@ -17,6 +17,7 @@ class JobSearchBloc extends Bloc<JobSearchEvent, JobSearchState> {
   }) : super(JobSearchInitial()) {
     on<SearchJobsEvent>(_onJobSearchRequested);
     on<JobDetailsRequested>(_onJobDetailsRequested);
+    on<ResetJobSearchEvent>(_onResetJobSearchEvent);
   }
 
   Future<void> _onJobSearchRequested(
@@ -47,5 +48,10 @@ class JobSearchBloc extends Bloc<JobSearchEvent, JobSearchState> {
       (failure) => emit(JobSearchError(failure)),
       (job) => emit(JobDetailsLoaded(job: job)),
     );
+  }
+
+  void _onResetJobSearchEvent(
+      ResetJobSearchEvent event, Emitter<JobSearchState> emit) {
+    emit(JobSearchInitial());
   }
 }

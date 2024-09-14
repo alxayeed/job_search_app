@@ -1,65 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
+import 'package:job_search_app/features/job_search/presentation/blocs/blocs.dart';
+import 'package:job_search_app/features/job_search/presentation/widgets/custom_app_bar.dart';
+import 'package:job_search_app/features/job_search/presentation/widgets/app_drawer.dart';
+import 'package:job_search_app/features/job_search/presentation/widgets/job_card.dart';
 import 'package:lottie/lottie.dart';
 import '../../domain/entities/job_entity.dart';
-import '../blocs/job_search_bloc.dart';
-import '../blocs/job_search_event.dart';
-import '../blocs/job_search_state.dart';
-import '../widgets/job_card.dart';
-import 'package:ionicons/ionicons.dart';
+
+final sl = GetIt.instance;
 
 class JobSearchScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          SliverAppBar(
-            expandedHeight: 100.0,
-            pinned: true,
-            floating: false,
-            centerTitle: true,
-            backgroundColor: Colors.blueAccent,
-            title: Text(
-              'Job Search',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                color: Colors.white,
-              ),
-            ),
-            flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.blueAccent, Colors.lightBlue],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-              ),
-            ),
-            elevation: 5,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(
-                bottom: Radius.circular(20),
-              ),
-            ),
-            leading: Icon(
-              Icons.menu,
-              color: Colors.white,
-            ),
-            actions: [
-              IconButton(
-                icon: Icon(Ionicons.heart, color: Colors.white),
-                onPressed: () {
-                  // Action for notifications icon
-                },
-              ),
-            ],
-          ),
-        ],
-        body: JobSearchBody(), // Main content goes here
+    return BlocProvider.value(
+      value: sl<JobSearchBloc>()..add(ResetJobSearchEvent()),
+      child: Scaffold(
+        drawer: AppDrawer(),
+        body: NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            CustomAppBar(appBarTitle: "Job Search"),
+          ],
+          body: JobSearchBody(),
+        ),
       ),
     );
   }

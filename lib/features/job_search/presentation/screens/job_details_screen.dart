@@ -4,16 +4,15 @@ import 'package:ionicons/ionicons.dart';
 import 'package:job_search_app/core/constants/app_strings.dart';
 import 'package:lottie/lottie.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart'; // For launching URLs
+import 'package:url_launcher/url_launcher.dart';
 import '../../domain/entities/job_entity.dart';
 import '../blocs/job_search_bloc.dart';
 import '../blocs/job_search_event.dart';
 import '../blocs/job_search_state.dart';
 import 'package:get_it/get_it.dart';
 
-import '../widgets/show_field_widget.dart'; // Ensure the import is here if using GetIt
+import '../widgets/show_field_widget.dart';
 
-// Access the service locator instance
 final sl = GetIt.instance;
 
 class JobDetailsScreen extends StatelessWidget {
@@ -23,11 +22,9 @@ class JobDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Retrieve the JobSearchBloc instance using sl<>
     final jobSearchBloc = sl<JobSearchBloc>();
 
-    // Trigger the event for fetching job details
-    jobSearchBloc.add(JobDetailsRequested(jobId: job.jobId)); // jobId is non-nullable
+    jobSearchBloc.add(JobDetailsRequested(jobId: job.jobId));
 
     return BlocProvider.value(
       value: jobSearchBloc,
@@ -41,7 +38,6 @@ class JobDetailsScreen extends StatelessWidget {
             IconButton(
               onPressed: () {
                 if (job.jobApplyLink != null) {
-                  // Share the job apply link using the Share Plus package
                   Share.share(
                     job.jobApplyLink!,
                     subject: 'Check out this job: ${job.jobTitle}',
@@ -106,7 +102,7 @@ class JobDetailsScreen extends StatelessWidget {
                         Text(
                           job.employerName ?? 'N/A',
                           style:
-                          TextStyle(fontSize: 18, color: Colors.grey[700]),
+                              TextStyle(fontSize: 18, color: Colors.grey[700]),
                         ),
                         SizedBox(height: 16),
                         Text(
@@ -121,7 +117,7 @@ class JobDetailsScreen extends StatelessWidget {
                           ShowFieldInfo(
                             fieldName: 'Salary:',
                             value:
-                            '${job.jobSalaryCurrency ?? ''} per ${job.jobSalaryPeriod ?? ''}',
+                                '${job.jobSalaryCurrency ?? ''} per ${job.jobSalaryPeriod ?? ''}',
                           ),
                         if (job.jobHighlights?.qualifications != null)
                           Column(
@@ -133,7 +129,7 @@ class JobDetailsScreen extends StatelessWidget {
                                     fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                               for (var qualification
-                              in job.jobHighlights?.qualifications ?? [])
+                                  in job.jobHighlights?.qualifications ?? [])
                                 Text('- ${qualification ?? 'N/A'}'),
                             ],
                           ),
@@ -149,7 +145,7 @@ class JobDetailsScreen extends StatelessWidget {
                                   fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                             for (var responsibility
-                            in job.jobHighlights?.responsibilities ?? [])
+                                in job.jobHighlights?.responsibilities ?? [])
                               Text('- ${responsibility ?? 'N/A'}'),
                           ],
                         ),
@@ -174,8 +170,8 @@ class JobDetailsScreen extends StatelessWidget {
                           fieldName: 'Experience:',
                           value: job.jobRequiredExperience != null
                               ? job.jobRequiredExperience!.noExperienceRequired!
-                              ? 'No Experience Required'
-                              : '${job.jobRequiredExperience!.requiredExperienceInMonths} months'
+                                  ? 'No Experience Required'
+                                  : '${job.jobRequiredExperience!.requiredExperienceInMonths} months'
                               : 'N/A',
                         ),
                         SizedBox(
@@ -222,7 +218,6 @@ class JobDetailsScreen extends StatelessWidget {
                                 },
                               ),
                             ),
-
                           ],
                         ),
                       ),

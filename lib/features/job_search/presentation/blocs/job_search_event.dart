@@ -30,3 +30,5 @@ class JobDetailsRequested extends JobSearchEvent {
   @override
   List<Object> get props => [jobId];
 }
+
+class ResetJobSearchEvent extends JobSearchEvent {}

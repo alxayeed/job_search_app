@@ -4,7 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:job_search_app/core/utils/date_time_extensions.dart';
 
 import '../../domain/entities/job_entity.dart';
-import '../pages/job_details_screen.dart';
+import '../screens/job_details_screen.dart';
 
 class JobCard extends StatelessWidget {
   const JobCard({
