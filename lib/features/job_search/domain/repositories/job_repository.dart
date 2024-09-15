@@ -30,4 +30,7 @@ abstract class JobRepository {
   /// - Left: [JobFailure] if there was an error.
   /// - Right: [JobEntity] with job details.
   Future<Either<JobFailure, JobEntity>> getJobDetails(String jobId);
+
+  Future<Either<JobFailure, JobEntity>> bookmarkJob(JobEntity job);
+
 }

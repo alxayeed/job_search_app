@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:job_search_app/core/constants/app_strings.dart';
+import 'package:job_search_app/features/job_search/presentation/blocs/blocs.dart';
 import 'package:lottie/lottie.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../domain/entities/job_entity.dart';
-import '../blocs/job_search_bloc.dart';
-import '../blocs/job_search_event.dart';
-import '../blocs/job_search_state.dart';
 import 'package:get_it/get_it.dart';
 
 import '../widgets/show_field_widget.dart';
@@ -200,7 +198,9 @@ class JobDetailsScreen extends StatelessWidget {
                         child: Row(
                           children: [
                             IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                jobSearchBloc.add(BookmarkJobEvent(job: job));
+                              },
                               icon: Icon(Icons.bookmark_outline, size: 28,),
                             ),
                             Expanded(

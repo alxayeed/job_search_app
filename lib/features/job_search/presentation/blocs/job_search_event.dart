@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:job_search_app/features/job_search/domain/entities/job_entity.dart';
 
 abstract class JobSearchEvent extends Equatable {
   @override
@@ -32,3 +33,12 @@ class JobDetailsRequested extends JobSearchEvent {
 }
 
 class ResetJobSearchEvent extends JobSearchEvent {}
+
+class BookmarkJobEvent extends JobSearchEvent {
+  final JobEntity job;
+
+  BookmarkJobEvent({required this.job});
+
+  @override
+  List<Object> get props => [job];
+}

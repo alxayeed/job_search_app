@@ -1,5 +1,6 @@
 // job_entity.dart
 import 'package:equatable/equatable.dart';
+import 'package:job_search_app/features/job_search/data/models/job_model.dart';
 
 class JobEntity extends Equatable {
   final String jobId;
@@ -75,6 +76,33 @@ class JobEntity extends Equatable {
         jobJobTitle,
         jobPostingLanguage,
       ];
+
+  JobModel toModel() {
+    return JobModel(
+      jobId: jobId,
+      employerName: employerName,
+      employerLogo: employerLogo,
+      employerWebsite: employerWebsite,
+      jobEmploymentType: jobEmploymentType,
+      jobTitle: jobTitle,
+      jobApplyLink: jobApplyLink,
+      jobApplyIsDirect: jobApplyIsDirect,
+      applyOptions: applyOptions,
+      jobDescription: jobDescription,
+      jobIsRemote: jobIsRemote,
+      jobPostedAtDatetimeUtc: jobPostedAtDatetimeUtc,
+      jobCity: jobCity,
+      jobCountry: jobCountry,
+      jobBenefits: jobBenefits,
+      jobGoogleLink: jobGoogleLink,
+      jobRequiredExperience: jobRequiredExperience,
+      jobSalaryCurrency: jobSalaryCurrency,
+      jobSalaryPeriod: jobSalaryPeriod,
+      jobHighlights: jobHighlights,
+      jobJobTitle: jobJobTitle,
+      jobPostingLanguage: jobPostingLanguage,
+    );
+  }
 }
 
 class ApplyOption extends Equatable {
