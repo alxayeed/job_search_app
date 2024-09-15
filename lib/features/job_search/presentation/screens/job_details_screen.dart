@@ -12,6 +12,7 @@ import '../blocs/job_search_state.dart';
 import 'package:get_it/get_it.dart';
 
 import '../widgets/show_field_widget.dart';
+import 'package:job_search_app/core/utils/experience_month_to_year.dart';
 
 final sl = GetIt.instance;
 
@@ -105,6 +106,31 @@ class JobDetailsScreen extends StatelessWidget {
                               TextStyle(fontSize: 18, color: Colors.grey[700]),
                         ),
                         SizedBox(height: 16),
+                        ShowFieldInfo(
+                          fieldName: 'Employment Type:',
+                          value: job.jobEmploymentType ?? 'N/A',
+                        ),
+                        ShowFieldInfo(
+                          fieldName: 'Remote:',
+                          value: job.jobIsRemote != null
+                              ? (job.jobIsRemote! ? 'Yes' : 'No')
+                              : 'N/A',
+                        ),
+                        ShowFieldInfo(
+                          fieldName: 'Location:',
+                          value: job.jobCity != null && job.jobCountry != null
+                              ? '${job.jobCity}, ${job.jobCountry}'
+                              : 'N/A',
+                        ),
+                        ShowFieldInfo(
+                          fieldName: 'Experience:',
+                          value: job.jobRequiredExperience != null
+                              ? job.jobRequiredExperience!.noExperienceRequired!
+                              ? 'No Experience Required'
+                              : '${job.jobRequiredExperience!.requiredExperienceInMonths?.convertToYear()} years'
+                              : 'N/A',
+                        ),
+                        SizedBox(height: 16),
                         Text(
                           'Description:',
                           style: TextStyle(
@@ -149,31 +175,6 @@ class JobDetailsScreen extends StatelessWidget {
                               Text('- ${responsibility ?? 'N/A'}'),
                           ],
                         ),
-                        SizedBox(height: 10),
-                        ShowFieldInfo(
-                          fieldName: 'Employment Type:',
-                          value: job.jobEmploymentType ?? 'N/A',
-                        ),
-                        ShowFieldInfo(
-                          fieldName: 'Remote:',
-                          value: job.jobIsRemote != null
-                              ? (job.jobIsRemote! ? 'Yes' : 'No')
-                              : 'N/A',
-                        ),
-                        ShowFieldInfo(
-                          fieldName: 'Location:',
-                          value: job.jobCity != null && job.jobCountry != null
-                              ? '${job.jobCity}, ${job.jobCountry}'
-                              : 'N/A',
-                        ),
-                        ShowFieldInfo(
-                          fieldName: 'Experience:',
-                          value: job.jobRequiredExperience != null
-                              ? job.jobRequiredExperience!.noExperienceRequired!
-                                  ? 'No Experience Required'
-                                  : '${job.jobRequiredExperience!.requiredExperienceInMonths} months'
-                              : 'N/A',
-                        ),
                         SizedBox(
                             height: 80), // To ensure button does not overlap
                       ],
@@ -200,7 +201,7 @@ class JobDetailsScreen extends StatelessWidget {
                           children: [
                             IconButton(
                               onPressed: () {},
-                              icon: Icon(Ionicons.heart_outline),
+                              icon: Icon(Icons.bookmark_outline, size: 28,),
                             ),
                             Expanded(
                               child: MaterialButton(
