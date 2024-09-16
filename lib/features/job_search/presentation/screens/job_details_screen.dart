@@ -15,15 +15,15 @@ import 'package:job_search_app/core/utils/experience_month_to_year.dart';
 final sl = GetIt.instance;
 
 class JobDetailsScreen extends StatelessWidget {
-  final JobEntity job;
+  final JobEntity jobEntity;
 
-  JobDetailsScreen({required this.job});
+  JobDetailsScreen({required this.jobEntity});
 
   @override
   Widget build(BuildContext context) {
     final jobSearchBloc = sl<JobSearchBloc>();
 
-    jobSearchBloc.add(JobDetailsRequested(jobId: job.jobId));
+    jobSearchBloc.add(JobDetailsRequested(jobId: jobEntity.jobId));
 
     return BlocProvider.value(
       value: jobSearchBloc,
@@ -32,14 +32,14 @@ class JobDetailsScreen extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: Colors.blueAccent,
           foregroundColor: Colors.white,
-          title: Text('${job.jobTitle ?? AppStrings.notApplicable}'),
+          title: Text('${jobEntity.jobTitle ?? AppStrings.notApplicable}'),
           actions: [
             IconButton(
               onPressed: () {
-                if (job.jobApplyLink != null) {
+                if (jobEntity.jobApplyLink != null) {
                   Share.share(
-                    job.jobApplyLink!,
-                    subject: 'Check out this job: ${job.jobTitle}',
+                    jobEntity.jobApplyLink!,
+                    subject: 'Check out this job: ${jobEntity.jobTitle}',
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -53,25 +53,26 @@ class JobDetailsScreen extends StatelessWidget {
             ),
           ],
         ),
-        body: Stack(
-          children: [
-            BlocBuilder<JobSearchBloc, JobSearchState>(
-              builder: (context, state) {
-                if (state is JobSearchLoading) {
-                  return Center(
-                    child: Lottie.asset(
-                      'assets/loading.json',
-                      width: 300,
-                      height: 300,
-                    ),
-                  );
-                } else if (state is JobSearchError) {
-                  return Center(
-                    child: Text(state.failure.toString()),
-                  );
-                } else if (state is JobDetailsLoaded) {
-                  print(state.job);
-                  return SingleChildScrollView(
+        body: BlocBuilder<JobSearchBloc, JobSearchState>(
+          builder: (context, state) {
+            if (state is JobSearchLoading) {
+              return Center(
+                child: Lottie.asset(
+                  'assets/loading.json',
+                  width: 300,
+                  height: 300,
+                ),
+              );
+            } else if (state is JobSearchError) {
+              return Center(
+                child: Text(state.failure.toString()),
+              );
+            } else if (state is JobDetailsLoaded) {
+              JobEntity job = state.job;
+              print(job.isBookmarked);
+              return Stack(
+                children: [
+                  SingleChildScrollView(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,7 +103,7 @@ class JobDetailsScreen extends StatelessWidget {
                         Text(
                           job.employerName ?? 'N/A',
                           style:
-                              TextStyle(fontSize: 18, color: Colors.grey[700]),
+                          TextStyle(fontSize: 18, color: Colors.grey[700]),
                         ),
                         SizedBox(height: 16),
                         ShowFieldInfo(
@@ -125,8 +126,8 @@ class JobDetailsScreen extends StatelessWidget {
                           fieldName: 'Experience:',
                           value: job.jobRequiredExperience != null
                               ? job.jobRequiredExperience!.noExperienceRequired!
-                                  ? 'No Experience Required'
-                                  : '${job.jobRequiredExperience!.requiredExperienceInMonths?.convertToYear()} years'
+                              ? 'No Experience Required'
+                              : '${job.jobRequiredExperience!.requiredExperienceInMonths?.convertToYear()} years'
                               : 'N/A',
                         ),
                         SizedBox(height: 16),
@@ -142,7 +143,7 @@ class JobDetailsScreen extends StatelessWidget {
                           ShowFieldInfo(
                             fieldName: 'Salary:',
                             value:
-                                '${job.jobSalaryCurrency ?? ''} per ${job.jobSalaryPeriod ?? ''}',
+                            '${job.jobSalaryCurrency ?? ''} per ${job.jobSalaryPeriod ?? ''}',
                           ),
                         if (job.jobHighlights?.qualifications != null)
                           Column(
@@ -154,7 +155,7 @@ class JobDetailsScreen extends StatelessWidget {
                                     fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                               for (var qualification
-                                  in job.jobHighlights?.qualifications ?? [])
+                              in job.jobHighlights?.qualifications ?? [])
                                 Text('- ${qualification ?? 'N/A'}'),
                             ],
                           ),
@@ -170,7 +171,7 @@ class JobDetailsScreen extends StatelessWidget {
                                   fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                             for (var responsibility
-                                in job.jobHighlights?.responsibilities ?? [])
+                            in job.jobHighlights?.responsibilities ?? [])
                               Text('- ${responsibility ?? 'N/A'}'),
                           ],
                         ),
@@ -178,64 +179,64 @@ class JobDetailsScreen extends StatelessWidget {
                             height: 80), // To ensure button does not overlap
                       ],
                     ),
-                  );
-                }
-                return Center(
-                  child: Text('No details available.'),
-                );
-              },
-            ),
-            if (job.jobApplyLink != null)
-              BlocBuilder<JobSearchBloc, JobSearchState>(
-                builder: (context, state) {
-                  if (state is JobDetailsLoaded) {
-                    return Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        color: Colors.white,
-                        child: Row(
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                jobSearchBloc.add(BookmarkJobEvent(job: job));
-                              },
-                              icon: Icon(
-                                job.isBookmarked
-                                    ? Icons.bookmark
-                                    : Icons.bookmark_outline,
-                                size: 28,
-                                color: job.isBookmarked ? Colors.red : null,
+                  ),
+                  if (job.jobApplyLink != null)
+                    BlocBuilder<JobSearchBloc, JobSearchState>(
+                      builder: (context, state) {
+                        if (state is JobDetailsLoaded) {
+                          return Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              color: Colors.white,
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      jobSearchBloc.add(BookmarkJobEvent(job: job));
+                                    },
+                                    icon: Icon(
+                                      job.isBookmarked
+                                          ? Icons.bookmark
+                                          : Icons.bookmark_outline,
+                                      size: 38,
+                                      color: job.isBookmarked ? Colors.red : null,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: MaterialButton(
+                                      color: Colors.blue, // Button color
+                                      textColor: Colors.white,
+                                      child: Text('Apply Now'),
+                                      onPressed: () async {
+                                        final url = Uri.parse(job.jobApplyLink!);
+                                        if (!await launchUrl(
+                                          url,
+                                          mode: LaunchMode.externalApplication,
+                                        )) {
+                                          throw Exception('Could not launch $url');
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            Expanded(
-                              child: MaterialButton(
-                                color: Colors.blue, // Button color
-                                textColor: Colors.white,
-                                child: Text('Apply Now'),
-                                onPressed: () async {
-                                  final url = Uri.parse(job.jobApplyLink!);
-                                  if (!await launchUrl(
-                                    url,
-                                    mode: LaunchMode.externalApplication,
-                                  )) {
-                                    throw Exception('Could not launch $url');
-                                  }
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }
-                  return SizedBox
-                      .shrink(); // Return an empty widget if the button should not be shown
-                },
-              ),
-          ],
+                          );
+                        }
+                        return SizedBox
+                            .shrink(); // Return an empty widget if the button should not be shown
+                      },
+                    ),
+                ],
+              );
+            }
+            return Center(
+              child: Text('No details available.'),
+            );
+          },
         ),
       ),
     );

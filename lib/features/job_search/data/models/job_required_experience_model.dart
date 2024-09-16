@@ -21,7 +21,7 @@ class JobRequiredExperienceModel extends JobRequiredExperienceEntity {
       noExperienceRequired:
           json['no_experience_required'] == 'true' ? true : false,
       requiredExperienceInMonths: json['required_experience_in_months'] != null
-          ? int.tryParse(json['required_experience_in_months'])
+          ? int.tryParse(json['required_experience_in_months'].toString())
           : null,
       experienceMentioned:
           json['experience_mentioned'] == 'true' ? true : false,

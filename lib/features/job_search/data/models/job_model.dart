@@ -56,6 +56,7 @@ class JobModel extends JobEntity {
         );
 
   factory JobModel.fromJson(Map<String, dynamic> json) {
+    print(json);
     return JobModel(
       jobId: json['job_id'],
       employerName: json['employer_name'],
@@ -89,6 +90,7 @@ class JobModel extends JobEntity {
           : null,
       jobJobTitle: json['job_job_title'],
       jobPostingLanguage: json['job_posting_language'],
+      isBookmarked: json['isBookmarked'] ?? false,
     );
   }
 
@@ -118,6 +120,7 @@ class JobModel extends JobEntity {
       'job_highlights': (jobHighlights as JobHighlightsModel?)?.toJson(),
       'job_job_title': jobJobTitle,
       'job_posting_language': jobPostingLanguage,
+      'isBookmarked': isBookmarked,
     };
   }
 
@@ -151,9 +154,3 @@ class JobModel extends JobEntity {
     );
   }
 }
-
-
-
-
-
-
