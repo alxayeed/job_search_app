@@ -42,7 +42,9 @@ class JobRepositoryImpl implements JobRepository {
           jobModels.map((model) => model.toEntity()).toList();
 
       return Right(jobEntities);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('Exception: $e');
+      print('StackTrace: $stackTrace');
       return Left(ServerFailure(e.toString()));
     }
   }
@@ -76,10 +78,13 @@ class JobRepositoryImpl implements JobRepository {
   @override
   Future<Either<JobFailure, JobEntity>> bookmarkJob(JobEntity job) async {
     try {
-
       JobModel jobModel = job.toModel();
+
       await localDataSource.cacheJob(jobModel);
-      return Right(job);
+
+      JobEntity updatedEntity = job.copyWith(isBookmarked: !jobModel.isBookmarked);
+
+      return Right(updatedEntity);
     } catch (e) {
       return Left(CacheFailure(e.toString()));
     }

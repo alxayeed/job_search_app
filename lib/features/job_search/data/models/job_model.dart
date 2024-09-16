@@ -1,5 +1,9 @@
-import '../../domain/entities/job_entity.dart';
+import 'package:isar/isar.dart';
 
+import '../../domain/entities/job_entity.dart';
+import 'models.dart';
+
+@collection
 class JobModel extends JobEntity {
   JobModel({
     required String jobId,
@@ -10,7 +14,7 @@ class JobModel extends JobEntity {
     String? jobTitle,
     String? jobApplyLink,
     bool? jobApplyIsDirect,
-    List<ApplyOption>? applyOptions,
+    List<ApplyOptionModel>? applyOptions,
     String? jobDescription,
     bool? jobIsRemote,
     DateTime? jobPostedAtDatetimeUtc,
@@ -18,12 +22,13 @@ class JobModel extends JobEntity {
     String? jobCountry,
     List<String>? jobBenefits,
     String? jobGoogleLink,
-    JobRequiredExperience? jobRequiredExperience,
+    JobRequiredExperienceModel? jobRequiredExperience,
     String? jobSalaryCurrency,
     String? jobSalaryPeriod,
-    JobHighlights? jobHighlights,
+    JobHighlightsModel? jobHighlights,
     String? jobJobTitle,
     String? jobPostingLanguage,
+    bool isBookmarked = false,
   }) : super(
           jobId: jobId,
           employerName: employerName,
@@ -47,6 +52,7 @@ class JobModel extends JobEntity {
           jobHighlights: jobHighlights,
           jobJobTitle: jobJobTitle,
           jobPostingLanguage: jobPostingLanguage,
+          isBookmarked: isBookmarked,
         );
 
   factory JobModel.fromJson(Map<String, dynamic> json) {
@@ -60,11 +66,7 @@ class JobModel extends JobEntity {
       jobApplyLink: json['job_apply_link'],
       jobApplyIsDirect: json['job_apply_is_direct'],
       applyOptions: (json['apply_options'] as List?)
-          ?.map((option) => ApplyOption(
-                publisher: option['publisher'],
-                applyLink: option['apply_link'],
-                isDirect: option['is_direct'],
-              ))
+          ?.map((option) => ApplyOptionModel.fromJson(option))
           .toList(),
       jobDescription: json['job_description'],
       jobIsRemote: json['job_is_remote'],
@@ -78,37 +80,12 @@ class JobModel extends JobEntity {
           .toList(),
       jobGoogleLink: json['job_google_link'],
       jobRequiredExperience: json['job_required_experience'] != null
-          ? JobRequiredExperience(
-              noExperienceRequired: json['job_required_experience']
-                      ['no_experience_required'] ==
-                  'true',
-              requiredExperienceInMonths: json['job_required_experience']
-                          ['required_experience_in_months'] !=
-                      null
-                  ? int.tryParse(json['job_required_experience']
-                      ['required_experience_in_months'])
-                  : null,
-              experienceMentioned: json['job_required_experience']
-                      ['experience_mentioned'] ==
-                  'true',
-              experiencePreferred: json['job_required_experience']
-                      ['experience_preferred'] ==
-                  'true',
-            )
+          ? JobRequiredExperienceModel.fromJson(json['job_required_experience'])
           : null,
       jobSalaryCurrency: json['job_salary_currency'],
       jobSalaryPeriod: json['job_salary_period'],
       jobHighlights: json['job_highlights'] != null
-          ? JobHighlights(
-              qualifications:
-                  (json['job_highlights']['Qualifications'] as List<dynamic>?)
-                      ?.map((qual) => qual.toString())
-                      .toList(),
-              responsibilities:
-                  (json['job_highlights']['Responsibilities'] as List<dynamic>?)
-                      ?.map((resp) => resp.toString())
-                      .toList(),
-            )
+          ? JobHighlightsModel.fromJson(json['job_highlights'])
           : null,
       jobJobTitle: json['job_job_title'],
       jobPostingLanguage: json['job_posting_language'],
@@ -125,13 +102,8 @@ class JobModel extends JobEntity {
       'job_title': jobTitle,
       'job_apply_link': jobApplyLink,
       'job_apply_is_direct': jobApplyIsDirect,
-      'apply_options': applyOptions
-          ?.map((option) => {
-                'publisher': option.publisher,
-                'apply_link': option.applyLink,
-                'is_direct': option.isDirect,
-              })
-          .toList(),
+      'apply_options':
+          applyOptions?.map((e) => (e as ApplyOptionModel).toJson()).toList(),
       'job_description': jobDescription,
       'job_is_remote': jobIsRemote,
       'job_posted_at_datetime_utc': jobPostedAtDatetimeUtc?.toIso8601String(),
@@ -139,26 +111,11 @@ class JobModel extends JobEntity {
       'job_country': jobCountry,
       'job_benefits': jobBenefits,
       'job_google_link': jobGoogleLink,
-      'job_required_experience': jobRequiredExperience != null
-          ? {
-              'no_experience_required':
-                  jobRequiredExperience!.noExperienceRequired,
-              'required_experience_in_months':
-                  jobRequiredExperience!.requiredExperienceInMonths,
-              'experience_mentioned':
-                  jobRequiredExperience!.experienceMentioned,
-              'experience_preferred':
-                  jobRequiredExperience!.experiencePreferred,
-            }
-          : null,
+      'job_required_experience':
+          (jobRequiredExperience as JobRequiredExperienceModel?)?.toJson(),
       'job_salary_currency': jobSalaryCurrency,
       'job_salary_period': jobSalaryPeriod,
-      'job_highlights': jobHighlights != null
-          ? {
-              'Qualifications': jobHighlights!.qualifications,
-              'Responsibilities': jobHighlights!.responsibilities,
-            }
-          : null,
+      'job_highlights': (jobHighlights as JobHighlightsModel?)?.toJson(),
       'job_job_title': jobJobTitle,
       'job_posting_language': jobPostingLanguage,
     };
@@ -174,7 +131,8 @@ class JobModel extends JobEntity {
       jobTitle: jobTitle,
       jobApplyLink: jobApplyLink,
       jobApplyIsDirect: jobApplyIsDirect,
-      applyOptions: applyOptions,
+      applyOptions:
+          applyOptions?.map((e) => (e as ApplyOptionModel).toEntity()).toList(),
       jobDescription: jobDescription,
       jobIsRemote: jobIsRemote,
       jobPostedAtDatetimeUtc: jobPostedAtDatetimeUtc,
@@ -182,12 +140,20 @@ class JobModel extends JobEntity {
       jobCountry: jobCountry,
       jobBenefits: jobBenefits,
       jobGoogleLink: jobGoogleLink,
-      jobRequiredExperience: jobRequiredExperience,
+      jobRequiredExperience:
+          (jobRequiredExperience as JobRequiredExperienceModel?)?.toEntity(),
       jobSalaryCurrency: jobSalaryCurrency,
       jobSalaryPeriod: jobSalaryPeriod,
-      jobHighlights: jobHighlights,
+      jobHighlights: (jobHighlights as JobHighlightsModel?)?.toEntity(),
       jobJobTitle: jobJobTitle,
       jobPostingLanguage: jobPostingLanguage,
+      isBookmarked: isBookmarked,
     );
   }
 }
+
+
+
+
+
+

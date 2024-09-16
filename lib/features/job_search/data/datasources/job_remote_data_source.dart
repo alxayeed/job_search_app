@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:job_search_app/core/config/api_config.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 abstract class JobDataSource {
   Future<Map<String, dynamic>> searchJobs({

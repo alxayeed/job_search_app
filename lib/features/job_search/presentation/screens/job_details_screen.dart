@@ -124,8 +124,8 @@ class JobDetailsScreen extends StatelessWidget {
                           fieldName: 'Experience:',
                           value: job.jobRequiredExperience != null
                               ? job.jobRequiredExperience!.noExperienceRequired!
-                              ? 'No Experience Required'
-                              : '${job.jobRequiredExperience!.requiredExperienceInMonths?.convertToYear()} years'
+                                  ? 'No Experience Required'
+                                  : '${job.jobRequiredExperience!.requiredExperienceInMonths?.convertToYear()} years'
                               : 'N/A',
                         ),
                         SizedBox(height: 16),
@@ -201,7 +201,13 @@ class JobDetailsScreen extends StatelessWidget {
                               onPressed: () {
                                 jobSearchBloc.add(BookmarkJobEvent(job: job));
                               },
-                              icon: Icon(Icons.bookmark_outline, size: 28,),
+                              icon: Icon(
+                                job.isBookmarked
+                                    ? Icons.bookmark
+                                    : Icons.bookmark_outline,
+                                size: 28,
+                                color: job.isBookmarked ? Colors.red : null,
+                              ),
                             ),
                             Expanded(
                               child: MaterialButton(
