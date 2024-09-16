@@ -70,6 +70,7 @@ class JobDetailsScreen extends StatelessWidget {
                     child: Text(state.failure.toString()),
                   );
                 } else if (state is JobDetailsLoaded) {
+                  print(state.job);
                   return SingleChildScrollView(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(

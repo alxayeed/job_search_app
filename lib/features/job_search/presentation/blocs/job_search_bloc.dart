@@ -54,17 +54,16 @@ class JobSearchBloc extends Bloc<JobSearchEvent, JobSearchState> {
     );
   }
 
-
-  Future<void> _onBookmarkJob(BookmarkJobEvent event, Emitter<JobSearchState> emit) async {
+  Future<void> _onBookmarkJob(
+      BookmarkJobEvent event, Emitter<JobSearchState> emit) async {
     //TODO: emit bookmark success and show snack message
-    print("Job is saved");
 
     final Either<JobFailure, JobEntity> result =
         await bookmarkJobUseCase(event.job);
 
     result.fold(
-          (failure) => emit(JobSearchError(failure)),
-          (job) => emit(JobDetailsLoaded(job: job)),
+      (failure) => emit(JobSearchError(failure)),
+      (job) => emit(JobDetailsLoaded(job: job)),
     );
 
     // JobDetailsLoaded(job: event.job) ;
