@@ -31,22 +31,30 @@ class JobRemoteDataSource implements JobDataSource {
     final Uri uri = Uri.parse(ApiConfig.searchJobs).replace(
       queryParameters: {
         'query': query,
-        'num_pages': '1',
+        'num_pages': '20',
         'remote_jobs_only': remoteJobsOnly.toString(),
         'employment_types': employmentType,
         'date_posted': datePosted,
       },
     );
 
-    try {
-      final response = await dio.getUri(uri);
+    final box = GetStorage();
+    var cachedResponse = box.read("job_results");
 
-      if (response.statusCode == 200) {
-        // Return the response data
-        return response.data;
+    try {
+      if (cachedResponse == null) {
+        final response = await dio.getUri(uri);
+        if (response.statusCode == 200) {
+          box.write("job_results", response.data);
+          // Return the response data
+          return response.data;
+        } else {
+          // Handle error
+          throw Exception('Failed to load jobs');
+        }
       } else {
-        // Handle error
-        throw Exception('Failed to load jobs');
+        await Future.delayed(Duration(seconds: 3));
+        return cachedResponse;
       }
     } catch (e) {
       // Handle exceptions
@@ -76,5 +84,18 @@ class JobRemoteDataSource implements JobDataSource {
       // Handle exceptions
       throw Exception('Failed to load job details: $e');
     }
+  }
+
+  Future<Map<String, dynamic>> getCachedResponse() async {
+    final jsonString =
+        await rootBundle.loadString('assets/fake_response/search_jobs.json');
+
+    // Parse the JSON string into a Map
+    final cachedResponse = jsonDecode(jsonString) as Map<String, dynamic>;
+
+    // Wait for 3 seconds before returning the cached response
+    await Future.delayed(Duration(seconds: 3));
+
+    return cachedResponse;
   }
 }
