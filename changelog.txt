@@ -1,3 +1,1 @@
-1. Bookmark feature fixed. Add and remove from cache memory logic added
-2. changelog file added
-3. Bloc observer added
+1. SRP maintained. different repository methods created for adding and removing bookmark.
