@@ -56,7 +56,6 @@ class JobModel extends JobEntity {
         );
 
   factory JobModel.fromJson(Map<String, dynamic> json) {
-    print(json);
     return JobModel(
       jobId: json['job_id'],
       employerName: json['employer_name'],

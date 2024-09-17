@@ -18,10 +18,8 @@ class JobCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // print("GO TO DETAILS SCREEN.\n JOB ID: ${job.jobId}");
-        // BlocProvider.of<JobSearchBloc>(context).add(
-        //   JobDetailsRequested(jobId: job.jobId),
-        // );
+        // final jobSearchBloc = sl<JobSearchBloc>();
+        // jobSearchBloc.add(JobDetailsRequested(jobId: job.jobId));
 
         Navigator.push(
           context,

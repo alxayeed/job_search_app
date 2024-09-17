@@ -74,11 +74,17 @@ class JobRepositoryImpl implements JobRepository {
   @override
   Future<Either<JobFailure, JobEntity>> bookmarkJob(JobEntity job) async {
     try {
-      JobEntity updatedEntity = job.copyWith(isBookmarked: !job.isBookmarked);
-
-      JobModel jobModel = updatedEntity.toModel();
-
-      await localDataSource.cacheJob(jobModel);
+      JobEntity updatedEntity;
+      //TODO: Refactor to separate methods
+      if(job.isBookmarked){
+        updatedEntity = job.copyWith(isBookmarked: false);
+        JobModel jobModel = updatedEntity.toModel();
+        await localDataSource.removeFromBookmark(jobModel);
+      } else{
+        updatedEntity = job.copyWith(isBookmarked: true);
+        JobModel jobModel = updatedEntity.toModel();
+        await localDataSource.addToBookmark(jobModel);
+      }
 
       return Right(updatedEntity);
     } catch (e) {

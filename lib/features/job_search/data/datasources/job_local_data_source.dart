@@ -7,8 +7,12 @@ class JobLocalDataSource {
 
   final box = GetStorage();
 
-  Future<void> cacheJob(JobModel job) async {
+  Future<void> addToBookmark(JobModel job) async {
     box.write(job.jobId, job.toJson());
+  }
+
+  Future<void> removeFromBookmark(JobModel job) async {
+    box.remove(job.jobId);
   }
 
   Future<JobModel?> getCachedJob(String jobId) async {

@@ -1,12 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
+import 'package:job_search_app/features/job_search/presentation/blocs/blocs.dart';
 import '../../../../core/error/job_failure.dart';
 import '../../domain/entities/job_entity.dart';
 import '../../domain/usecases/bookmark_job_use_case.dart';
 import '../../domain/usecases/fetch_job_use_case.dart';
 import '../../domain/usecases/get_job_details_use_case.dart';
-import 'job_search_event.dart';
-import 'job_search_state.dart';
 
 class JobSearchBloc extends Bloc<JobSearchEvent, JobSearchState> {
   final FetchJobsUseCase searchJobs;
@@ -43,7 +42,7 @@ class JobSearchBloc extends Bloc<JobSearchEvent, JobSearchState> {
 
   Future<void> _onJobDetailsRequested(
       JobDetailsRequested event, Emitter<JobSearchState> emit) async {
-    emit(JobSearchLoading());
+    emit(JobDetailsLoading());
 
     final Either<JobFailure, JobEntity> result =
         await getJobDetailsUseCase(event.jobId);
@@ -56,17 +55,17 @@ class JobSearchBloc extends Bloc<JobSearchEvent, JobSearchState> {
 
   Future<void> _onBookmarkJob(
       BookmarkJobEvent event, Emitter<JobSearchState> emit) async {
-    //TODO: emit bookmark success and show snack message
-
     final Either<JobFailure, JobEntity> result =
         await bookmarkJobUseCase(event.job);
 
     result.fold(
       (failure) => emit(JobSearchError(failure)),
-      (job) => emit(JobDetailsLoaded(job: job)),
+      (job) => emit(
+        job.isBookmarked
+            ? BookmarkAddedState(job: job)
+            : BookmarkRemovedState(job: job),
+      ),
     );
-
-    // JobDetailsLoaded(job: event.job) ;
   }
 
   void _onResetJobSearchEvent(

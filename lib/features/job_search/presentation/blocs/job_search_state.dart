@@ -50,3 +50,22 @@ class JobDetailsError extends JobSearchState {
   @override
   List<Object> get props => [failure];
 }
+
+class BookmarkAddedState extends JobSearchState {
+  final JobEntity job;
+
+  BookmarkAddedState({required this.job});
+
+  @override
+  List<Object> get props => [job];
+}
+
+class BookmarkRemovedState extends JobSearchState {
+  final JobEntity job;
+
+  BookmarkRemovedState({required this.job});
+
+  @override
+  List<Object> get props => [job];
+}
+

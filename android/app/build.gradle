@@ -51,7 +51,7 @@ android {
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 10          // Set the versionCode here
+        versionCode 12          // Set the versionCode here
         versionName "1.0.0"      // Set the versionName here
         multiDexEnabled true
     }
@@ -63,7 +63,7 @@ android {
             signingConfig signingConfigs.debug
             firebaseAppDistribution {
                 artifactType="APK"
-                releaseNotes="Job bookmark feature added"
+                releaseNotesFile = "/job_search_app/changelog.txt"
                 testers="alxayeed@gmail.com"
             }
         }
