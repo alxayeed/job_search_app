@@ -31,7 +31,7 @@ class JobRemoteDataSource implements JobDataSource {
     final Uri uri = Uri.parse(ApiConfig.searchJobs).replace(
       queryParameters: {
         'query': query,
-        'num_pages': '20',
+        'num_pages': '1',
         'remote_jobs_only': remoteJobsOnly.toString(),
         'employment_types': employmentType,
         'date_posted': datePosted,

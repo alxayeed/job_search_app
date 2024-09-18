@@ -42,3 +42,11 @@ class BookmarkJobEvent extends JobSearchEvent {
   @override
   List<Object> get props => [job];
 }
+
+class GetBookmarkedJobsEvent extends JobSearchEvent {
+
+  GetBookmarkedJobsEvent();
+
+  @override
+  List<Object> get props => [];
+}

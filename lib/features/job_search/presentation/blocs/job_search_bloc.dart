@@ -9,16 +9,19 @@ class JobSearchBloc extends Bloc<JobSearchEvent, JobSearchState> {
   final FetchJobsUseCase searchJobs;
   final GetJobDetailsUseCase getJobDetailsUseCase;
   final ToggleBookmarkUseCase toggleBookmarkUseCase;
+  final GetBookmarkedJobsUseCase getBookmarkedJobs;
 
   JobSearchBloc({
     required this.searchJobs,
     required this.getJobDetailsUseCase,
     required this.toggleBookmarkUseCase,
+    required this.getBookmarkedJobs,
   }) : super(JobSearchInitial()) {
     on<SearchJobsEvent>(_onJobSearchRequested);
     on<JobDetailsRequested>(_onJobDetailsRequested);
     on<ResetJobSearchEvent>(_onResetJobSearchEvent);
     on<BookmarkJobEvent>(_onBookmarkJob);
+    on<GetBookmarkedJobsEvent>(_onGetAllBookmarkedJobs);
   }
 
   Future<void> _onJobSearchRequested(
@@ -69,5 +72,16 @@ class JobSearchBloc extends Bloc<JobSearchEvent, JobSearchState> {
   void _onResetJobSearchEvent(
       ResetJobSearchEvent event, Emitter<JobSearchState> emit) {
     emit(JobSearchInitial());
+  }
+
+  void _onGetAllBookmarkedJobs(
+      GetBookmarkedJobsEvent event, Emitter<JobSearchState> emit) async {
+    emit(BookmarkedJobsLoading());
+    final Either<JobFailure, List<JobEntity>> result = await getBookmarkedJobs();
+
+    result.fold(
+            (failure) => BookmarkedJobsErrorState(message: "Error getting bookmarked jobs"),
+            (bookmarkedJobs) => emit(BookmarkedJobsLoaded(bookmarkedJobs)),
+    );
   }
 }

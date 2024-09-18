@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:job_search_app/features/job_search/presentation/screens/job_search_screen.dart';
 import 'package:job_search_app/features/job_search/presentation/screens/salary_estimation_screen.dart';
-import 'package:job_search_app/features/job_search/presentation/screens/saved_jobs_screen.dart';
+import 'package:job_search_app/features/job_search/presentation/screens/bookmarked_jobs_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -62,7 +62,7 @@ class AppDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) {
-                  return SavedJobsScreen();
+                  return BookmarkedJobsScreen();
                 }),
               );
               // Navigator.pushNamed(context, '/saved-jobs');

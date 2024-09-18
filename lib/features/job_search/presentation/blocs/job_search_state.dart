@@ -69,3 +69,22 @@ class BookmarkRemovedState extends JobSearchState {
   List<Object> get props => [job];
 }
 
+class BookmarkedJobsLoading extends JobSearchState {}
+
+class BookmarkedJobsLoaded extends JobSearchState {
+  final List<JobEntity> jobs;
+
+  BookmarkedJobsLoaded(this.jobs);
+
+  @override
+  List<Object> get props => [jobs];
+}
+
+class BookmarkedJobsErrorState extends JobSearchState {
+  final String message;
+
+  BookmarkedJobsErrorState({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}

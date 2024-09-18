@@ -35,4 +35,6 @@ abstract class JobRepository {
 
   Future<Either<JobFailure, JobEntity>> removeJobFromBookmark(JobEntity job);
 
+  Future<Either<JobFailure, List<JobEntity>>> getAllBookmarkedJobs();
+
 }
