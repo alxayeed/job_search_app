@@ -1,7 +1,5 @@
-import 'package:isar/isar.dart';
 import '../../domain/entities/apply_options_entity.dart';
 
-@embedded
 class ApplyOptionModel extends ApplyOptionEntity {
   ApplyOptionModel({
     String? publisher,

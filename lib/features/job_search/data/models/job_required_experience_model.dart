@@ -1,8 +1,5 @@
-import 'package:isar/isar.dart';
-
 import '../../domain/entities/job_required_experience_entity.dart';
 
-@embedded
 class JobRequiredExperienceModel extends JobRequiredExperienceEntity {
   JobRequiredExperienceModel({
     bool? noExperienceRequired,

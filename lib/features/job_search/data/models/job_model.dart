@@ -1,9 +1,6 @@
-import 'package:isar/isar.dart';
-
 import '../../domain/entities/job_entity.dart';
 import 'models.dart';
 
-@collection
 class JobModel extends JobEntity {
   JobModel({
     required String jobId,

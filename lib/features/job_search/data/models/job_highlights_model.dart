@@ -1,8 +1,5 @@
-import 'package:isar/isar.dart';
-
 import '../../domain/entities/job_highlights_entity.dart';
 
-@embedded
 class JobHighlightsModel extends JobHighlightsEntity {
   JobHighlightsModel({
     List<String>? qualifications,
