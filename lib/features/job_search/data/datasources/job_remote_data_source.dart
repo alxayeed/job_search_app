@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:job_search_app/core/config/api_config.dart';
 import 'package:flutter/services.dart' show rootBundle;
+
+import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/services/get_storage_service.dart';
 
 abstract class JobDataSource {
   Future<Map<String, dynamic>> searchJobs({
@@ -38,7 +40,9 @@ class JobRemoteDataSource implements JobDataSource {
       },
     );
 
-    final box = GetStorage();
+    final storageService = sl<GetStorageService>();
+    final box = storageService.jobResultsBox;
+
     var cachedResponse = box.read("job_results");
 
     try {

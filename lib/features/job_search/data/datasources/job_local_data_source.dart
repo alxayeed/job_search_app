@@ -2,22 +2,24 @@
 import 'package:get_storage/get_storage.dart';
 import 'package:job_search_app/features/job_search/data/models/job_model.dart';
 
+import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/services/get_storage_service.dart';
 
 class JobLocalDataSource {
   JobLocalDataSource();
 
-  final box = GetStorage();
+  final storageService = sl<GetStorageService>();
 
   Future<void> addToBookmark(JobModel job) async {
-    box.write(job.jobId, job.toJson());
+    storageService.bookmarkBox.write(job.jobId, job.toJson());
   }
 
   Future<void> removeFromBookmark(JobModel job) async {
-    box.remove(job.jobId);
+    storageService.bookmarkBox.remove(job.jobId);
   }
 
   Future<JobModel?> getCachedJob(String jobId) async {
-    final cachedJobJson = box.read(jobId);
+    final cachedJobJson = storageService.bookmarkBox.read(jobId);
 
     if (cachedJobJson == null) return null;
 
@@ -30,6 +32,7 @@ class JobLocalDataSource {
     //TODO: check the cached response
     final box = GetStorage();
     var cachedResponse = box.read("job_results");
+
     print(cachedResponse);
 
     return cachedResponse;

@@ -6,14 +6,16 @@ import '../../features/job_search/data/repositories/job_repository_impl.dart';
 import '../../features/job_search/domain/repositories/job_repository.dart';
 import '../../features/job_search/domain/usecases/usecases.dart';
 import '../../features/job_search/presentation/blocs/job_search_bloc.dart';
-import '../services/dio_service.dart';
+import '../services/services.dart';
 
 final sl = GetIt.instance;
 
 Future<void> init() async {
   // Initialize Dio service
   sl.registerLazySingleton<DioService>(() => DioService());
-  // sl.registerLazySingleton<IsarService>(() => IsarService());
+
+  // Initialize StorageService
+  sl.registerSingleton<GetStorageService>(GetStorageService());
 
   // Initialize remote data source
   sl.registerLazySingleton<JobRemoteDataSource>(
@@ -40,7 +42,7 @@ Future<void> init() async {
   sl.registerFactory(() => JobSearchBloc(
         searchJobs: sl<FetchJobsUseCase>(),
         getJobDetailsUseCase: sl<GetJobDetailsUseCase>(),
-    toggleBookmarkUseCase: sl<ToggleBookmarkUseCase>(),
-    getBookmarkedJobs: sl<GetBookmarkedJobsUseCase>(),
+        toggleBookmarkUseCase: sl<ToggleBookmarkUseCase>(),
+        getBookmarkedJobs: sl<GetBookmarkedJobsUseCase>(),
       ));
 }
