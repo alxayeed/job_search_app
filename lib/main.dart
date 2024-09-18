@@ -20,7 +20,8 @@ void main() async {
   );
   final storageService = GetStorageService();
   await storageService.init();
-  Bloc.observer = AppBlocObserver();
+
+  // Bloc.observer = AppBlocObserver();
   runApp(MyJobApp());
 }
 

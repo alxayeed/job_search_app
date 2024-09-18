@@ -2,22 +2,23 @@ import 'package:get_storage/get_storage.dart';
 import 'package:job_search_app/core/constants/app_strings.dart';
 
 class GetStorageService {
-  static final GetStorageService _instance = GetStorageService._internal();
+  static GetStorageService? _instance;
 
   factory GetStorageService() {
-    return _instance;
+    if (_instance == null) {
+      _instance = GetStorageService._internal();
+    }
+    return _instance!;
   }
 
   GetStorageService._internal();
 
   Future<void> init() async {
-    await GetStorage.init();
+    await GetStorage.init(AppStrings.bookmarkBox);
+    await GetStorage.init(AppStrings.jobResultsBox);
   }
 
-  // Store single instances of each box
-  late final GetStorage _bookmarkBox = GetStorage(AppStrings.bookmarkBox);
-  late final GetStorage _jobResultsBox = GetStorage(AppStrings.jobResultsBox);
-
-  GetStorage get bookmarkBox => _bookmarkBox;
-  GetStorage get jobResultsBox => _jobResultsBox;
+  // Access the boxes directly
+  GetStorage get bookmarkBox => GetStorage(AppStrings.bookmarkBox);
+  GetStorage get jobResultsBox => GetStorage(AppStrings.jobResultsBox);
 }

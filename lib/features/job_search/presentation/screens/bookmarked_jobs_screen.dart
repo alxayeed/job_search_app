@@ -51,7 +51,6 @@ class BookmarkedJobsScreen extends StatelessWidget {
                           },
                         );
                       } else {
-                        print("NO JOBS FOUND");
                         return Center(
                           child: Text(
                             'No jobs found in bookmark',
