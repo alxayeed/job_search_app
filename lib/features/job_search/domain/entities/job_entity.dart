@@ -1,6 +1,8 @@
 // job_entity.dart
 import 'package:equatable/equatable.dart';
-import 'package:job_search_app/features/job_search/data/models/job_model.dart';
+
+import '../../data/models/models.dart';
+import 'entities.dart';
 
 class JobEntity extends Equatable {
   final String jobId;
@@ -11,7 +13,7 @@ class JobEntity extends Equatable {
   final String? jobTitle;
   final String? jobApplyLink;
   final bool? jobApplyIsDirect;
-  final List<ApplyOption>? applyOptions;
+  final List<ApplyOptionEntity>? applyOptions;
   final String? jobDescription;
   final bool? jobIsRemote;
   final DateTime? jobPostedAtDatetimeUtc;
@@ -19,12 +21,13 @@ class JobEntity extends Equatable {
   final String? jobCountry;
   final List<String>? jobBenefits;
   final String? jobGoogleLink;
-  final JobRequiredExperience? jobRequiredExperience;
+  final JobRequiredExperienceEntity? jobRequiredExperience;
   final String? jobSalaryCurrency;
   final String? jobSalaryPeriod;
-  final JobHighlights? jobHighlights;
+  final JobHighlightsEntity? jobHighlights;
   final String? jobJobTitle;
   final String? jobPostingLanguage;
+  final bool isBookmarked;
 
   JobEntity({
     required this.jobId,
@@ -49,10 +52,66 @@ class JobEntity extends Equatable {
     this.jobHighlights,
     this.jobJobTitle,
     this.jobPostingLanguage,
+    this.isBookmarked = false,
   });
 
+  JobEntity copyWith({
+    String? jobId,
+    String? employerName,
+    String? employerLogo,
+    String? employerWebsite,
+    String? jobEmploymentType,
+    String? jobTitle,
+    String? jobApplyLink,
+    bool? jobApplyIsDirect,
+    List<ApplyOptionEntity>? applyOptions,
+    String? jobDescription,
+    bool? jobIsRemote,
+    DateTime? jobPostedAtDatetimeUtc,
+    String? jobCity,
+    String? jobCountry,
+    List<String>? jobBenefits,
+    String? jobGoogleLink,
+    JobRequiredExperienceEntity? jobRequiredExperience,
+    String? jobSalaryCurrency,
+    String? jobSalaryPeriod,
+    JobHighlightsEntity? jobHighlights,
+    String? jobJobTitle,
+    String? jobPostingLanguage,
+    bool? isBookmarked,
+  }) {
+    return JobEntity(
+      jobId: jobId ?? this.jobId,
+      employerName: employerName ?? this.employerName,
+      employerLogo: employerLogo ?? this.employerLogo,
+      employerWebsite: employerWebsite ?? this.employerWebsite,
+      jobEmploymentType: jobEmploymentType ?? this.jobEmploymentType,
+      jobTitle: jobTitle ?? this.jobTitle,
+      jobApplyLink: jobApplyLink ?? this.jobApplyLink,
+      jobApplyIsDirect: jobApplyIsDirect ?? this.jobApplyIsDirect,
+      applyOptions: applyOptions ?? this.applyOptions,
+      jobDescription: jobDescription ?? this.jobDescription,
+      jobIsRemote: jobIsRemote ?? this.jobIsRemote,
+      jobPostedAtDatetimeUtc: jobPostedAtDatetimeUtc ??
+          this.jobPostedAtDatetimeUtc,
+      jobCity: jobCity ?? this.jobCity,
+      jobCountry: jobCountry ?? this.jobCountry,
+      jobBenefits: jobBenefits ?? this.jobBenefits,
+      jobGoogleLink: jobGoogleLink ?? this.jobGoogleLink,
+      jobRequiredExperience: jobRequiredExperience ??
+          this.jobRequiredExperience,
+      jobSalaryCurrency: jobSalaryCurrency ?? this.jobSalaryCurrency,
+      jobSalaryPeriod: jobSalaryPeriod ?? this.jobSalaryPeriod,
+      jobHighlights: jobHighlights ?? this.jobHighlights,
+      jobJobTitle: jobJobTitle ?? this.jobJobTitle,
+      jobPostingLanguage: jobPostingLanguage ?? this.jobPostingLanguage,
+      isBookmarked: isBookmarked ?? this.isBookmarked,
+    );
+  }
+
   @override
-  List<Object?> get props => [
+  List<Object?> get props =>
+      [
         jobId,
         employerName,
         employerLogo,
@@ -75,6 +134,7 @@ class JobEntity extends Equatable {
         jobHighlights,
         jobJobTitle,
         jobPostingLanguage,
+        isBookmarked,
       ];
 
   JobModel toModel() {
@@ -87,7 +147,7 @@ class JobEntity extends Equatable {
       jobTitle: jobTitle,
       jobApplyLink: jobApplyLink,
       jobApplyIsDirect: jobApplyIsDirect,
-      applyOptions: applyOptions,
+      applyOptions: applyOptions?.map((e) => e.toModel()).toList(),
       jobDescription: jobDescription,
       jobIsRemote: jobIsRemote,
       jobPostedAtDatetimeUtc: jobPostedAtDatetimeUtc,
@@ -95,62 +155,20 @@ class JobEntity extends Equatable {
       jobCountry: jobCountry,
       jobBenefits: jobBenefits,
       jobGoogleLink: jobGoogleLink,
-      jobRequiredExperience: jobRequiredExperience,
+      jobRequiredExperience: jobRequiredExperience?.toModel(),
       jobSalaryCurrency: jobSalaryCurrency,
       jobSalaryPeriod: jobSalaryPeriod,
-      jobHighlights: jobHighlights,
+      jobHighlights: jobHighlights?.toModel(),
       jobJobTitle: jobJobTitle,
       jobPostingLanguage: jobPostingLanguage,
+      isBookmarked: isBookmarked,
     );
   }
+
 }
 
-class ApplyOption extends Equatable {
-  final String? publisher;
-  final String? applyLink;
-  final bool? isDirect;
 
-  ApplyOption({
-    this.publisher,
-    this.applyLink,
-    this.isDirect,
-  });
 
-  @override
-  List<Object?> get props => [publisher, applyLink, isDirect];
-}
 
-class JobRequiredExperience extends Equatable {
-  final bool? noExperienceRequired;
-  final int? requiredExperienceInMonths;
-  final bool? experienceMentioned;
-  final bool? experiencePreferred;
 
-  JobRequiredExperience({
-    this.noExperienceRequired,
-    this.requiredExperienceInMonths,
-    this.experienceMentioned,
-    this.experiencePreferred,
-  });
 
-  @override
-  List<Object?> get props => [
-        noExperienceRequired,
-        requiredExperienceInMonths,
-        experienceMentioned,
-        experiencePreferred,
-      ];
-}
-
-class JobHighlights extends Equatable {
-  final List<String>? qualifications;
-  final List<String>? responsibilities;
-
-  JobHighlights({
-    this.qualifications,
-    this.responsibilities,
-  });
-
-  @override
-  List<Object?> get props => [qualifications, responsibilities];
-}

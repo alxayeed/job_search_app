@@ -1,5 +1,11 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:job_search_app/core/config/api_config.dart';
+import 'package:flutter/services.dart' show rootBundle;
+
+import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/services/get_storage_service.dart';
 
 abstract class JobDataSource {
   Future<Map<String, dynamic>> searchJobs({
@@ -34,15 +40,25 @@ class JobRemoteDataSource implements JobDataSource {
       },
     );
 
-    try {
-      final response = await dio.getUri(uri);
+    final storageService = sl<GetStorageService>();
+    final box = storageService.jobResultsBox;
 
-      if (response.statusCode == 200) {
-        // Return the response data
-        return response.data;
+    var cachedResponse = box.read("job_results");
+
+    try {
+      if (cachedResponse == null) {
+        final response = await dio.getUri(uri);
+        if (response.statusCode == 200) {
+          box.write("job_results", response.data);
+          // Return the response data
+          return response.data;
+        } else {
+          // Handle error
+          throw Exception('Failed to load jobs');
+        }
       } else {
-        // Handle error
-        throw Exception('Failed to load jobs');
+        await Future.delayed(Duration(seconds: 3));
+        return cachedResponse;
       }
     } catch (e) {
       // Handle exceptions
@@ -72,5 +88,18 @@ class JobRemoteDataSource implements JobDataSource {
       // Handle exceptions
       throw Exception('Failed to load job details: $e');
     }
+  }
+
+  Future<Map<String, dynamic>> getCachedResponse() async {
+    final jsonString =
+        await rootBundle.loadString('assets/fake_response/search_jobs.json');
+
+    // Parse the JSON string into a Map
+    final cachedResponse = jsonDecode(jsonString) as Map<String, dynamic>;
+
+    // Wait for 3 seconds before returning the cached response
+    await Future.delayed(Duration(seconds: 3));
+
+    return cachedResponse;
   }
 }

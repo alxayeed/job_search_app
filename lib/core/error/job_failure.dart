@@ -33,3 +33,12 @@ class InputFailure extends JobFailure {
   @override
   List<Object?> get props => [message];
 }
+
+class BookmarkFailure extends JobFailure {
+  final String message;
+
+  BookmarkFailure(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
