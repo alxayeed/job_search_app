@@ -1,6 +1,6 @@
 // job_local_data_source.dart
-import 'package:get_storage/get_storage.dart';
 import 'package:job_search_app/features/job_search/data/models/job_model.dart';
+import 'package:job_search_app/features/job_search/domain/entities/entities.dart';
 
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/services/get_storage_service.dart';
@@ -26,15 +26,24 @@ class JobLocalDataSource {
     return JobModel.fromJson(cachedJobJson as Map<String, dynamic>);
   }
 
-  Future<Map<String, dynamic>> getAllBookmarkedJobs() async {
-    //TODO: Get all keys
-    //TODO: Iterate through the keys to get all jobs and return
-    //TODO: check the cached response
-    final box = GetStorage();
-    var cachedResponse = box.read("job_results");
+  Future<List<JobEntity>> getAllBookmarkedJobs() async {
+    final box = storageService.bookmarkBox;
 
-    print(cachedResponse);
+    // Get all keys from the box
+    final keys = box.getKeys();
 
-    return cachedResponse;
+    // Fetch all bookmarked jobs from the box
+    final List<JobEntity> bookmarkedJobs = [];
+
+    for (String key in keys) {
+      final jobJson = box.read(key);
+      if (jobJson != null) {
+        final job = JobModel.fromJson(jobJson as Map<String, dynamic>);
+        JobEntity jobEntity = job.toEntity();
+        bookmarkedJobs.add(jobEntity);
+      }
+    }
+
+    return bookmarkedJobs;
   }
 }

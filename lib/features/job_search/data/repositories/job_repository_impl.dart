@@ -100,18 +100,19 @@ class JobRepositoryImpl implements JobRepository {
 
   @override
   Future<Either<JobFailure, List<JobEntity>>> getAllBookmarkedJobs() async {
-    try{
-      final Map<String, dynamic> result = await localDataSource.getAllBookmarkedJobs();
-
-      final List<JobModel> jobModels = (result['data'] as List)
-          .map((jobJson) => JobModel.fromJson(jobJson))
-          .toList();
-
+    try {
       final List<JobEntity> jobEntities =
-      jobModels.map((model) => model.toEntity()).toList();
+          await localDataSource.getAllBookmarkedJobs();
+
+      // final List<JobModel> jobModels = (result['data'] as List)
+      //     .map((jobJson) => JobModel.fromJson(jobJson))
+      //     .toList();
+      //
+      // final List<JobEntity> jobEntities =
+      // jobModels.map((model) => model.toEntity()).toList();
 
       return Right(jobEntities);
-    } catch(e){
+    } catch (e) {
       return Left(CacheFailure(e.toString()));
     }
   }

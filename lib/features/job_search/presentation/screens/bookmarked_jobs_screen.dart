@@ -41,19 +41,29 @@ class BookmarkedJobsScreen extends StatelessWidget {
                     } else if (state is BookmarkedJobsErrorState) {
                       return _buildErrorState(state);
                     } else if (state is BookmarkedJobsLoaded) {
-                      return ListView.builder(
-                        padding: EdgeInsets.all(16.0),
-                        itemCount: state.jobs.length,
-                        itemBuilder: (context, index) {
-                          final JobEntity job = state.jobs[index];
-                          return JobCard(job: job);
-                        },
-                      );
+                      if (state.jobs.isNotEmpty) {
+                        return ListView.builder(
+                          padding: EdgeInsets.all(16.0),
+                          itemCount: state.jobs.length,
+                          itemBuilder: (context, index) {
+                            final JobEntity job = state.jobs[index];
+                            return JobCard(job: job);
+                          },
+                        );
+                      } else {
+                        print("NO JOBS FOUND");
+                        return Center(
+                          child: Text(
+                            'No jobs found in bookmark',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        );
+                      }
                     }
                     return Center(
                       child: Text(
                         'No jobs found in bookmark',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
+                        style: TextStyle(fontSize: 18),
                       ),
                     );
                   },

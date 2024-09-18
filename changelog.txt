@@ -1,2 +1,2 @@
-1. Saved job screen now showing data from saved search results. Need to update it
+1. Bookmark feature updated. Bookmark list UI created.
 2. Singleton service class created for LocalStorage. all usage updated.
