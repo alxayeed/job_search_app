@@ -49,29 +49,27 @@ class SalaryEstimationEntity extends Equatable {
     String? salaryCurrency,
   }) {
     return SalaryEstimationEntity(
-      location:  location ?? this.location,
-      jobTitle: jobTitle ?? this.jobTitle,
-      publisherName: publisherName ?? this.publisherName,
-      publisherLink: publisherLink ?? this.publisherLink,
-      minimumSalary: minimumSalary ?? this.minimumSalary,
-      maximumSalary: maximumSalary ?? this.maximumSalary,
-      medianSalary: medianSalary ?? this.medianSalary,
-      salaryPeriod:  salaryPeriod ?? this.salaryPeriod,
-      salaryCurrency: salaryCurrency ?? this.salaryCurrency
-    );
+        location: location ?? this.location,
+        jobTitle: jobTitle ?? this.jobTitle,
+        publisherName: publisherName ?? this.publisherName,
+        publisherLink: publisherLink ?? this.publisherLink,
+        minimumSalary: minimumSalary ?? this.minimumSalary,
+        maximumSalary: maximumSalary ?? this.maximumSalary,
+        medianSalary: medianSalary ?? this.medianSalary,
+        salaryPeriod: salaryPeriod ?? this.salaryPeriod,
+        salaryCurrency: salaryCurrency ?? this.salaryCurrency);
   }
 
-SalaryEstimationModel toModel(){
+  SalaryEstimationModel toModel() {
     return SalaryEstimationModel(
-        location:  location,
+        location: location,
         jobTitle: jobTitle,
         publisherName: publisherName,
         publisherLink: publisherLink,
         minimumSalary: minimumSalary,
         maximumSalary: maximumSalary,
         medianSalary: medianSalary,
-        salaryPeriod:  salaryPeriod,
-        salaryCurrency: salaryCurrency
-    );
-}
+        salaryPeriod: salaryPeriod,
+        salaryCurrency: salaryCurrency);
+  }
 }

@@ -1,6 +1,6 @@
 import 'package:job_search_app/features/salary_estimation/domain/entities/entities.dart';
 
-class SalaryEstimationModel extends SalaryEstimationEntity{
+class SalaryEstimationModel extends SalaryEstimationEntity {
   SalaryEstimationModel({
     String? location,
     String? jobTitle,
@@ -12,32 +12,31 @@ class SalaryEstimationModel extends SalaryEstimationEntity{
     String? salaryPeriod,
     String? salaryCurrency,
   }) : super(
-      location: location,
-      jobTitle: jobTitle,
-      publisherName: publisherName,
-      publisherLink: publisherLink,
-      minimumSalary: minimumSalary,
-      maximumSalary: maximumSalary,
-      medianSalary: medianSalary,
-      salaryPeriod:  salaryPeriod,
-      salaryCurrency: salaryCurrency
-  );
+            location: location,
+            jobTitle: jobTitle,
+            publisherName: publisherName,
+            publisherLink: publisherLink,
+            minimumSalary: minimumSalary,
+            maximumSalary: maximumSalary,
+            medianSalary: medianSalary,
+            salaryPeriod: salaryPeriod,
+            salaryCurrency: salaryCurrency);
 
-  factory SalaryEstimationModel.fromJson(Map<String, dynamic> json){
+  factory SalaryEstimationModel.fromJson(Map<String, dynamic> json) {
     return SalaryEstimationModel(
-        location: json["location"],
-        jobTitle: json["job_title"],
-        publisherName: json["publisher_name"],
-        publisherLink: json["publisher_link"],
-        minimumSalary: json["min_salary"],
-        maximumSalary: json["max_salary"],
-        medianSalary: json["median_salary"],
-        salaryPeriod:  json["salary_period"],
-        salaryCurrency: json["salary_currency"],
+      location: json["location"],
+      jobTitle: json["job_title"],
+      publisherName: json["publisher_name"],
+      publisherLink: json["publisher_link"],
+      minimumSalary: json["min_salary"],
+      maximumSalary: json["max_salary"],
+      medianSalary: json["median_salary"],
+      salaryPeriod: json["salary_period"],
+      salaryCurrency: json["salary_currency"],
     );
   }
 
-  Map<String, dynamic> toJson(){
+  Map<String, dynamic> toJson() {
     return {
       "location": location,
       "job_title": jobTitle,
@@ -46,22 +45,21 @@ class SalaryEstimationModel extends SalaryEstimationEntity{
       "min_salary": minimumSalary,
       "max_salary": maximumSalary,
       "median_salary": medianSalary,
-      "salary_period":  salaryPeriod,
+      "salary_period": salaryPeriod,
       "salary_currency": salaryCurrency,
     };
   }
 
-  SalaryEstimationEntity toEntity(){
+  SalaryEstimationEntity toEntity() {
     return SalaryEstimationEntity(
-        location:  location,
+        location: location,
         jobTitle: jobTitle,
         publisherName: publisherName,
         publisherLink: publisherLink,
         minimumSalary: minimumSalary,
         maximumSalary: maximumSalary,
         medianSalary: medianSalary,
-        salaryPeriod:  salaryPeriod,
-        salaryCurrency: salaryCurrency
-    );
+        salaryPeriod: salaryPeriod,
+        salaryCurrency: salaryCurrency);
   }
 }
