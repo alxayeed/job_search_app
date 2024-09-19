@@ -8,4 +8,5 @@ class ApiConfig {
   // Endpoints
   static const String searchJobs = '/search';
   static const String getJobDetails = '/job-details';
+  static const String salaryEstimation = '/estimated-salary';
 }
