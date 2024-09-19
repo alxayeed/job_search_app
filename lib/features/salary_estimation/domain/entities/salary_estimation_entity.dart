@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:job_search_app/features/salary_estimation/data/models/models.dart';
+import 'package:job_search_app/features/salary_estimation/data/models/salary_estimation_model.dart';
 
 class SalaryEstimationEntity extends Equatable {
   final String? location;
