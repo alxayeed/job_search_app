@@ -7,6 +7,7 @@ import 'package:lottie/lottie.dart';
 
 import '../../../../core/di/dependency_injection.dart';
 import '../../../job_search/presentation/widgets/widgets.dart';
+import '../widgets/widgets.dart';
 
 class SalaryEstimationScreen extends StatelessWidget {
   const SalaryEstimationScreen({super.key});
@@ -60,12 +61,10 @@ class _JobSearchBodyState extends State<SalaryEstimationBody> {
                   padding: EdgeInsets.all(16.0),
                   itemCount: state.salaryEstimations.length,
                   itemBuilder: (context, index) {
-                    final SalaryEstimationEntity salaryEstimations =
+                    final SalaryEstimationEntity salaryEstimation =
                         state.salaryEstimations[index];
-                    return ListTile(
-                      title: Text(salaryEstimations.jobTitle ??
-                          AppStrings.notApplicable),
-                    );
+
+                    return SalaryEstimationCard(entity: salaryEstimation);
                   },
                 );
               }
