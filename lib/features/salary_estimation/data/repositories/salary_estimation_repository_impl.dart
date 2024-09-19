@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:job_search_app/core/error/job_failure.dart';
 import 'package:job_search_app/features/salary_estimation/data/datasources/datasources.dart';
-import 'package:job_search_app/features/salary_estimation/data/models/models.dart';
+import 'package:job_search_app/features/salary_estimation/data/models/salary_estimation_model.dart';
 import 'package:job_search_app/features/salary_estimation/domain/entities/salary_estimation_entity.dart';
 import 'package:job_search_app/features/salary_estimation/domain/repositories/repositories.dart';
 
