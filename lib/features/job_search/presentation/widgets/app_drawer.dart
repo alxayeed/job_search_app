@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:job_search_app/features/job_search/presentation/screens/job_search_screen.dart';
-import 'package:job_search_app/features/job_search/presentation/screens/salary_estimation_screen.dart';
 import 'package:job_search_app/features/job_search/presentation/screens/bookmarked_jobs_screen.dart';
+
+import '../../../salary_estimation/presentation/pages/salary_estimation_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});

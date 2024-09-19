@@ -28,9 +28,9 @@ class SalaryEstimationModel extends SalaryEstimationEntity {
       jobTitle: json["job_title"],
       publisherName: json["publisher_name"],
       publisherLink: json["publisher_link"],
-      minimumSalary: json["min_salary"],
-      maximumSalary: json["max_salary"],
-      medianSalary: json["median_salary"],
+      minimumSalary: json["min_salary"].toDouble(),
+      maximumSalary: json["max_salary"].toDouble(),
+      medianSalary: json["median_salary"].toDouble(),
       salaryPeriod: json["salary_period"],
       salaryCurrency: json["salary_currency"],
     );

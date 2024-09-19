@@ -16,9 +16,12 @@ class GetStorageService {
   Future<void> init() async {
     await GetStorage.init(AppStrings.bookmarkBox);
     await GetStorage.init(AppStrings.jobResultsBox);
+    await GetStorage.init(AppStrings.salaryEstimationBox);
   }
 
   // Access the boxes directly
   GetStorage get bookmarkBox => GetStorage(AppStrings.bookmarkBox);
   GetStorage get jobResultsBox => GetStorage(AppStrings.jobResultsBox);
+  GetStorage get salaryEstimationBox =>
+      GetStorage(AppStrings.salaryEstimationBox);
 }

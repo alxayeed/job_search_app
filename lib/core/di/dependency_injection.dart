@@ -1,11 +1,16 @@
 import 'package:get_it/get_it.dart';
 import 'package:job_search_app/features/job_search/data/datasources/job_local_data_source.dart';
+import 'package:job_search_app/features/salary_estimation/data/datasources/datasources.dart';
+import 'package:job_search_app/features/salary_estimation/domain/repositories/repositories.dart';
+import 'package:job_search_app/features/salary_estimation/domain/usecases/get_salary_estimation_use_case.dart';
+import 'package:job_search_app/features/salary_estimation/presentation/bloc/bloc.dart';
 
 import '../../features/job_search/data/datasources/job_remote_data_source.dart';
 import '../../features/job_search/data/repositories/job_repository_impl.dart';
 import '../../features/job_search/domain/repositories/job_repository.dart';
 import '../../features/job_search/domain/usecases/usecases.dart';
 import '../../features/job_search/presentation/blocs/job_search_bloc.dart';
+import '../../features/salary_estimation/data/repositories/salary_estimation_repository_impl.dart';
 import '../services/services.dart';
 
 final sl = GetIt.instance;
@@ -20,6 +25,8 @@ Future<void> init() async {
   // Initialize remote data source
   sl.registerLazySingleton<JobRemoteDataSource>(
       () => JobRemoteDataSource(sl<DioService>().createDio()));
+  sl.registerLazySingleton<SalaryEstimationRemoteDatasource>(
+      () => SalaryEstimationRemoteDatasource(sl<DioService>().createDio()));
 
   // Initialize local data source
   sl.registerLazySingleton<JobLocalDataSource>(() => JobLocalDataSource.new());
@@ -32,11 +39,20 @@ Future<void> init() async {
     ),
   );
 
+  sl.registerLazySingleton<SalaryEstimationRepository>(
+    () => SalaryEstimationRepositoryImpl(
+      remoteDataSource: sl<SalaryEstimationRemoteDatasource>(),
+    ),
+  );
+
   // Initialize use cases
   sl.registerLazySingleton(() => FetchJobsUseCase(sl<JobRepository>()));
   sl.registerLazySingleton(() => GetJobDetailsUseCase(sl<JobRepository>()));
   sl.registerLazySingleton(() => ToggleBookmarkUseCase(sl<JobRepository>()));
   sl.registerLazySingleton(() => GetBookmarkedJobsUseCase(sl<JobRepository>()));
+
+  sl.registerLazySingleton(
+      () => GetSalaryEstimationUseCase(sl<SalaryEstimationRepository>()));
 
   // Initialize BLoC
   sl.registerFactory(() => JobSearchBloc(
@@ -44,5 +60,9 @@ Future<void> init() async {
         getJobDetailsUseCase: sl<GetJobDetailsUseCase>(),
         toggleBookmarkUseCase: sl<ToggleBookmarkUseCase>(),
         getBookmarkedJobs: sl<GetBookmarkedJobsUseCase>(),
+      ));
+
+  sl.registerFactory(() => SalaryEstimationBloc(
+        getSalaryEstimationUseCase: sl<GetSalaryEstimationUseCase>(),
       ));
 }

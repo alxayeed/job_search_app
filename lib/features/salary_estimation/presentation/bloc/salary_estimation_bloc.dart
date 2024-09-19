@@ -16,6 +16,7 @@ class SalaryEstimationBloc
   SalaryEstimationBloc({required this.getSalaryEstimationUseCase})
       : super(SalaryEstimationInitial()) {
     on<GetSalaryEstimationsEvent>((event, emit) async {
+      emit(SalaryEstimationLoading());
       final Either<JobFailure, List<SalaryEstimationEntity>> result =
           await getSalaryEstimationUseCase(
         jobTitle: event.jobTitle,
@@ -27,6 +28,10 @@ class SalaryEstimationBloc
         (failure) => emit(SalaryEstimationError(message: failure.toString())),
         (salaryEstimations) => emit(SalaryEstimationLoaded(salaryEstimations)),
       );
+    });
+
+    on<ResetSalaryEstimationsEvent>((event, emit) async {
+      emit(SalaryEstimationInitial());
     });
   }
 }

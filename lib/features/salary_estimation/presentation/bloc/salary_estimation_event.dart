@@ -18,3 +18,8 @@ class GetSalaryEstimationsEvent extends SalaryEstimationEvent {
   @override
   List<Object> get props => [jobTitle, location, radius];
 }
+
+class ResetSalaryEstimationsEvent extends SalaryEstimationEvent {
+  @override
+  List<Object?> get props => [];
+}

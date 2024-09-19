@@ -2,6 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:job_search_app/core/config/api_config.dart';
 import 'package:job_search_app/core/error/job_failure.dart';
 
+import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/services/get_storage_service.dart';
+
 abstract class SalaryEstimationDatasource {
   Future<Map<String, dynamic>> getSalaryEstimation({
     required String jobTitle,
@@ -27,15 +30,27 @@ class SalaryEstimationRemoteDatasource implements SalaryEstimationDatasource {
         'radius': radius,
       },
     );
+
+    final storageService = sl<GetStorageService>();
+    final box = storageService.salaryEstimationBox;
+
+    var cachedResponse = box.read("salary_estimation");
+
     try {
-      final response = await dio.getUri(uri);
-      if (response.statusCode == 200) {
-        return response.data;
+      if (cachedResponse == null) {
+        final response = await dio.getUri(uri);
+        if (response.statusCode == 200) {
+          box.write("salary_estimation", response.data);
+          return response.data;
+        } else {
+          throw Exception('Failed to load salary estimations');
+        }
       } else {
-        throw ServerFailure('Failed to load jobs: ${response.statusMessage}');
+        await Future.delayed(Duration(seconds: 3));
+        return cachedResponse;
       }
     } catch (e) {
-      throw ServerFailure('Failed to load jobs: $e');
+      throw ServerFailure('Failed to load salary estimations: $e');
     }
   }
 }

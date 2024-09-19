@@ -16,7 +16,6 @@ class SalaryEstimationRepositoryImpl implements SalaryEstimationRepository {
     required String location,
     String radius = "100",
   }) async {
-    // TODO: implement getSalaryEstimation
     try {
       final Map<String, dynamic> result =
           await remoteDataSource.getSalaryEstimation(

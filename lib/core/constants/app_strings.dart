@@ -5,4 +5,5 @@ class AppStrings {
   //Local db container
   static String jobResultsBox = "job_results";
   static String bookmarkBox = "bookmarks";
+  static String salaryEstimationBox = "salary_estimation";
 }
