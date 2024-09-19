@@ -42,3 +42,5 @@ class BookmarkFailure extends JobFailure {
   @override
   List<Object?> get props => [message];
 }
+
+
