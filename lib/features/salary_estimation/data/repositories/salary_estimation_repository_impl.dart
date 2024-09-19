@@ -24,15 +24,15 @@ class SalaryEstimationRepositoryImpl implements SalaryEstimationRepository {
         location: location,
       );
 
-      final List<SalaryEstimationModel> salaryEstimationModel = (result['data'] as List)
-          .map((jobJson) => SalaryEstimationModel.fromJson(jobJson))
-          .toList();
+      final List<SalaryEstimationModel> salaryEstimationModel =
+          (result['data'] as List)
+              .map((jobJson) => SalaryEstimationModel.fromJson(jobJson))
+              .toList();
 
       final List<SalaryEstimationEntity> salaryEstimationEntities =
-      salaryEstimationModel.map((model) => model.toEntity()).toList();
+          salaryEstimationModel.map((model) => model.toEntity()).toList();
 
       return Right(salaryEstimationEntities);
-
     } catch (e, stackTrace) {
       print('Exception: $e');
       print('StackTrace: $stackTrace');
