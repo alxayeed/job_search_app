@@ -1,2 +1,2 @@
-1. Fix: Storage not persisting issue fixed.
+Salary estimation feature implemented
 
