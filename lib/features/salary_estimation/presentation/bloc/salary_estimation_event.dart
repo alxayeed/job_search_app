@@ -12,7 +12,7 @@ class GetSalaryEstimationsEvent extends SalaryEstimationEvent {
   GetSalaryEstimationsEvent({
     required this.jobTitle,
     required this.location,
-    this.radius= "100",
+    this.radius = "100",
   });
 
   @override

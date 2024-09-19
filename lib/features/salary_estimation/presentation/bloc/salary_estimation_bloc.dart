@@ -16,15 +16,16 @@ class SalaryEstimationBloc
   SalaryEstimationBloc({required this.getSalaryEstimationUseCase})
       : super(SalaryEstimationInitial()) {
     on<GetSalaryEstimationsEvent>((event, emit) async {
-      final Either<JobFailure, List<SalaryEstimationEntity>> result = await getSalaryEstimationUseCase(
+      final Either<JobFailure, List<SalaryEstimationEntity>> result =
+          await getSalaryEstimationUseCase(
         jobTitle: event.jobTitle,
         location: event.location,
         radius: event.radius,
       );
 
       result.fold(
-            (failure) => emit(SalaryEstimationError(message: failure.toString())),
-            (salaryEstimations) => emit(SalaryEstimationLoaded(salaryEstimations)),
+        (failure) => emit(SalaryEstimationError(message: failure.toString())),
+        (salaryEstimations) => emit(SalaryEstimationLoaded(salaryEstimations)),
       );
     });
   }
