@@ -23,19 +23,22 @@ class SalaryEstimationRepositoryImpl implements SalaryEstimationRepository {
         location: location,
       );
 
-      final List<SalaryEstimationModel> salaryEstimationModel =
-          (result['data'] as List)
-              .map((jobJson) => SalaryEstimationModel.fromJson(jobJson))
-              .toList();
+      final data = result['data'] as List<dynamic>?; // Cast to List<dynamic>
+      if (data == null) {
+        return Left(InputFailure('Data is null or not in the expected format'));
+      }
+
+      final List<SalaryEstimationModel> salaryEstimationModels = data
+          .map((jobJson) => SalaryEstimationModel.fromJson(jobJson))
+          .toList();
 
       final List<SalaryEstimationEntity> salaryEstimationEntities =
-          salaryEstimationModel.map((model) => model.toEntity()).toList();
+          salaryEstimationModels.map((model) => model.toEntity()).toList();
 
       return Right(salaryEstimationEntities);
-    } catch (e, stackTrace) {
+    } catch (e) {
       print('Exception: $e');
-      print('StackTrace: $stackTrace');
-      return Left(InputFailure(e.toString()));
+      return Left(InputFailure('Error occurred: ${e.toString()}'));
     }
   }
 }
