@@ -43,7 +43,7 @@ class SalaryEstimationRemoteDatasource implements SalaryEstimationDatasource {
           box.write("salary_estimation", response.data);
           return response.data;
         } else {
-          throw Exception('Failed to load salary estimations');
+          throw ServerFailure('Failed to load salary estimations');
         }
       } else {
         await Future.delayed(Duration(seconds: 3));
