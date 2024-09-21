@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:job_search_app/core/config/api_config.dart';
+import 'package:job_search_app/core/error/job_failure.dart';
 import 'package:job_search_app/features/salary_estimation/data/datasources/salary_remote_data_source.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -93,5 +94,180 @@ void main() {
 
     // Ensure the storage was read for cached data
     verify(mockStorageBox.read('salary_estimation')).called(1);
+  });
+
+  test('should return cached data when available', () async {
+    final cachedData = {'data': []}; // Simulated cached data
+
+    // Simulate cached data
+    when(mockStorageBox.read('salary_estimation')).thenReturn(cachedData);
+
+    final result = await datasource.getSalaryEstimation(
+      jobTitle: 'Software Engineer',
+      location: 'New York',
+    );
+
+    // Assert: Ensure cached data is returned
+    expect(result, cachedData);
+
+    // Ensure the storage read method was called
+    verify(mockStorageBox.read('salary_estimation')).called(1);
+    verifyNever(mockDio.getUri(any)); // Ensure no API call was made
+  });
+
+  test('should handle DioException when API call fails', () async {
+    const jobTitle = 'Software Engineer';
+    const location = 'New York';
+    final uri = Uri.parse(ApiConfig.salaryEstimation).replace(
+      queryParameters: {
+        'job_title': jobTitle,
+        'location': location,
+        'radius': '100',
+      },
+    );
+
+    // Simulate DioException
+    when(mockDio.getUri(uri)).thenThrow(DioException(
+      requestOptions: RequestOptions(path: uri.toString()),
+      type: DioExceptionType.unknown, // Use an appropriate type
+      response: Response(
+        statusCode: 500,
+        requestOptions: RequestOptions(path: uri.toString()),
+      ),
+    ));
+
+    expect(
+      () async => await datasource.getSalaryEstimation(
+        jobTitle: jobTitle,
+        location: location,
+      ),
+      throwsA(isA<ServerFailure>()), // Check for ServerFailure instead
+    );
+
+    // Ensure the Dio request was made
+    verify(mockDio.getUri(uri)).called(1);
+  });
+
+  // NEW TESTS
+
+  test('should throw ServerFailure when API returns a non-200 status code',
+      () async {
+    const jobTitle = 'Software Engineer';
+    const location = 'New York';
+    final uri = Uri.parse(ApiConfig.salaryEstimation).replace(
+      queryParameters: {
+        'job_title': jobTitle,
+        'location': location,
+        'radius': '100',
+      },
+    );
+
+    when(mockDio.getUri(uri)).thenThrow(DioException(
+      requestOptions: RequestOptions(path: uri.toString()),
+      type: DioExceptionType.badResponse,
+      response: Response(
+        statusCode: 404,
+        requestOptions: RequestOptions(path: uri.toString()),
+      ),
+    ));
+
+    expect(
+      () async => await datasource.getSalaryEstimation(
+        jobTitle: jobTitle,
+        location: location,
+      ),
+      throwsA(isA<ServerFailure>()),
+    );
+
+    verify(mockDio.getUri(uri)).called(1);
+  });
+
+  test('should throw ServerFailure when DioExceptionType is connectionTimeout',
+      () async {
+    const jobTitle = 'Software Engineer';
+    const location = 'New York';
+    final uri = Uri.parse(ApiConfig.salaryEstimation).replace(
+      queryParameters: {
+        'job_title': jobTitle,
+        'location': location,
+        'radius': '100',
+      },
+    );
+
+    when(mockDio.getUri(uri)).thenThrow(DioException(
+      requestOptions: RequestOptions(path: uri.toString()),
+      type: DioExceptionType.connectionTimeout,
+      response: null,
+    ));
+
+    expect(
+      () async => await datasource.getSalaryEstimation(
+        jobTitle: jobTitle,
+        location: location,
+      ),
+      throwsA(isA<ServerFailure>()),
+    );
+
+    verify(mockDio.getUri(uri)).called(1);
+  });
+
+  test('should throw ServerFailure when DioExceptionType is timeout', () async {
+    const jobTitle = 'Software Engineer';
+    const location = 'New York';
+    final uri = Uri.parse(ApiConfig.salaryEstimation).replace(
+      queryParameters: {
+        'job_title': jobTitle,
+        'location': location,
+        'radius': '100',
+      },
+    );
+
+    when(mockDio.getUri(uri)).thenThrow(DioException(
+      requestOptions: RequestOptions(path: uri.toString()),
+      type: DioExceptionType.sendTimeout,
+      response: null,
+    ));
+
+    expect(
+      () async => await datasource.getSalaryEstimation(
+        jobTitle: jobTitle,
+        location: location,
+      ),
+      throwsA(isA<ServerFailure>()),
+    );
+
+    verify(mockDio.getUri(uri)).called(1);
+  });
+
+  test('should not write to storage when API call fails', () async {
+    const jobTitle = 'Software Engineer';
+    const location = 'New York';
+    final uri = Uri.parse(ApiConfig.salaryEstimation).replace(
+      queryParameters: {
+        'job_title': jobTitle,
+        'location': location,
+        'radius': '100',
+      },
+    );
+
+    when(mockDio.getUri(uri)).thenThrow(DioException(
+      requestOptions: RequestOptions(path: uri.toString()),
+      type: DioExceptionType.connectionError,
+      response: Response(
+        statusCode: 500,
+        requestOptions: RequestOptions(path: uri.toString()),
+      ),
+    ));
+
+    expect(
+      () async => await datasource.getSalaryEstimation(
+        jobTitle: jobTitle,
+        location: location,
+      ),
+      throwsA(isA<ServerFailure>()),
+    );
+
+    verifyNever(mockStorageBox.write(
+        'salary_estimation', any)); // Ensure no write happened
   });
 }
