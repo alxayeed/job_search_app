@@ -270,4 +270,63 @@ void main() {
     verifyNever(mockStorageBox.write(
         'salary_estimation', any)); // Ensure no write happened
   });
+
+  test('should throw ServerFailure when API response is null', () async {
+    const jobTitle = 'Software Engineer';
+    const location = 'New York';
+    final uri = Uri.parse(ApiConfig.salaryEstimation).replace(
+      queryParameters: {
+        'job_title': jobTitle,
+        'location': location,
+        'radius': '100',
+      },
+    );
+
+    when(mockDio.getUri(uri)).thenAnswer((_) async => Response(
+          data: null,
+          statusCode: 200,
+          requestOptions: RequestOptions(path: uri.toString()),
+        ));
+
+    expect(
+      () async => await datasource.getSalaryEstimation(
+        jobTitle: jobTitle,
+        location: location,
+      ),
+      throwsA(isA<ServerFailure>()), // Check for ServerFailure
+    );
+
+    verify(mockDio.getUri(uri)).called(1);
+  });
+
+  test('should throw Exception when API returns a non-200 status code',
+      () async {
+    const jobTitle = 'Software Engineer';
+    const location = 'New York';
+    final uri = Uri.parse(ApiConfig.salaryEstimation).replace(
+      queryParameters: {
+        'job_title': jobTitle,
+        'location': location,
+        'radius': '100',
+      },
+    );
+
+    // Simulate a non-200 response from the API
+    when(mockDio.getUri(uri)).thenAnswer((_) async => Response(
+          data: null,
+          statusCode: 404, // Simulating a Not Found error
+          requestOptions: RequestOptions(path: uri.toString()),
+        ));
+
+    expect(
+      () async => await datasource.getSalaryEstimation(
+        jobTitle: jobTitle,
+        location: location,
+      ),
+      throwsA(isA<ServerFailure>()),
+    );
+
+    // Ensure the Dio request was made
+    verify(mockDio.getUri(uri)).called(1);
+  });
 }
