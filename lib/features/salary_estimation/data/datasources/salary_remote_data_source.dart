@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:job_search_app/core/config/api_config.dart';
 import 'package:job_search_app/core/error/job_failure.dart';
-
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/services/get_storage_service.dart';
 
@@ -43,14 +42,18 @@ class SalaryEstimationRemoteDatasource implements SalaryEstimationDatasource {
           box.write("salary_estimation", response.data);
           return response.data;
         } else {
-          throw ServerFailure('Failed to load salary estimations');
+          throw ServerFailure(
+              'Received non-200 status code: ${response.statusCode}');
         }
       } else {
         await Future.delayed(Duration(seconds: 3));
         return cachedResponse;
       }
     } catch (e) {
-      throw ServerFailure('Failed to load salary estimations: $e');
+      if (e is DioException) {
+        throw ServerFailure('DioException: $e');
+      }
+      throw ServerFailure('An unexpected error occurred: $e');
     }
   }
 }

@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-
 import '../../../../core/error/job_failure.dart';
 import '../../domain/entities/entities.dart';
 import '../../domain/usecases/usecases.dart';
@@ -17,6 +16,7 @@ class SalaryEstimationBloc
       : super(SalaryEstimationInitial()) {
     on<GetSalaryEstimationsEvent>((event, emit) async {
       emit(SalaryEstimationLoading());
+
       final Either<JobFailure, List<SalaryEstimationEntity>> result =
           await getSalaryEstimationUseCase(
         jobTitle: event.jobTitle,
@@ -25,7 +25,10 @@ class SalaryEstimationBloc
       );
 
       result.fold(
-        (failure) => emit(SalaryEstimationError(message: failure.toString())),
+        (failure) {
+          // Emit an error state with a specific message
+          emit(SalaryEstimationError(message: _mapFailureToMessage(failure)));
+        },
         (salaryEstimations) => emit(SalaryEstimationLoaded(salaryEstimations)),
       );
     });
@@ -33,5 +36,19 @@ class SalaryEstimationBloc
     on<ResetSalaryEstimationsEvent>((event, emit) async {
       emit(SalaryEstimationInitial());
     });
+  }
+
+  // Map JobFailure to user-friendly messages
+  String _mapFailureToMessage(JobFailure failure) {
+    switch (failure.runtimeType) {
+      case NetworkFailure:
+        return 'Network failure. Please check your connection.';
+      case ServerFailure:
+        return 'Server error. Please try again later.';
+      case InputFailure:
+        return 'Input is invalid: Data is null or not in the expected format';
+      default:
+        return 'An unexpected error occurred.';
+    }
   }
 }

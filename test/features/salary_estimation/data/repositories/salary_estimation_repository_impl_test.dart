@@ -44,7 +44,7 @@ void main() {
         () async {
       // Arrange
       when(mockDatasource.getSalaryEstimation(
-              jobTitle: tJobTitle, location: tLocation))
+              jobTitle: tJobTitle, location: tLocation, radius: tRadius))
           .thenAnswer((_) async => {'data': mockSalaryData});
 
       // Act
@@ -57,7 +57,7 @@ void main() {
       // Assert
       expect(result, isA<Right<JobFailure, List<SalaryEstimationEntity>>>());
       verify(mockDatasource.getSalaryEstimation(
-          jobTitle: tJobTitle, location: tLocation));
+          jobTitle: tJobTitle, location: tLocation, radius: tRadius));
       verifyNoMoreInteractions(mockDatasource);
     });
 
@@ -65,7 +65,7 @@ void main() {
         () async {
       // Arrange
       when(mockDatasource.getSalaryEstimation(
-              jobTitle: tJobTitle, location: tLocation))
+              jobTitle: tJobTitle, location: tLocation, radius: tRadius))
           .thenThrow(ServerFailure('Server error'));
 
       // Act
@@ -77,9 +77,9 @@ void main() {
 
       // Assert
       expect(result, isA<Left<JobFailure, List<SalaryEstimationEntity>>>());
-      expect(result.fold((l) => l, (r) => null), isA<InputFailure>());
+      expect(result.fold((l) => l, (r) => null), isA<ServerFailure>());
       verify(mockDatasource.getSalaryEstimation(
-          jobTitle: tJobTitle, location: tLocation));
+          jobTitle: tJobTitle, location: tLocation, radius: tRadius));
       verifyNoMoreInteractions(mockDatasource);
     });
 
@@ -97,7 +97,7 @@ void main() {
       };
 
       when(mockDatasource.getSalaryEstimation(
-              jobTitle: tJobTitle, location: tLocation))
+              jobTitle: tJobTitle, location: tLocation, radius: tRadius))
           .thenAnswer((_) async => wrongDataJson);
 
       // Act
@@ -111,7 +111,25 @@ void main() {
       expect(result.isLeft(), true);
       expect(result, isA<Left<JobFailure, List<SalaryEstimationEntity>>>());
       verify(mockDatasource.getSalaryEstimation(
-          jobTitle: tJobTitle, location: tLocation));
+          jobTitle: tJobTitle, location: tLocation, radius: tRadius));
+    });
+
+    test('should return InputFailure when data is null or empty', () async {
+      // Arrange
+      when(mockDatasource.getSalaryEstimation(
+              jobTitle: tJobTitle, location: tLocation, radius: tRadius))
+          .thenAnswer((_) async => {'data': []}); // Simulate empty data
+
+      // Act
+      final result = await repository.getSalaryEstimation(
+        jobTitle: tJobTitle,
+        location: tLocation,
+        radius: tRadius,
+      );
+
+      // Assert
+      expect(result, isA<Left<JobFailure, List<SalaryEstimationEntity>>>());
+      expect(result.fold((l) => l, (r) => null), isA<InputFailure>());
     });
   });
 }

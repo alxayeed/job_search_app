@@ -64,7 +64,7 @@ void main() {
       verifyNoMoreInteractions(mockRepository);
     });
 
-    test('should return failure when repository call is unsuccessful',
+    test('should return ServerFailure when repository call is unsuccessful',
         () async {
       // Arrange
       when(mockRepository.getSalaryEstimation(
@@ -81,10 +81,71 @@ void main() {
       );
 
       // Assert
-      expect(result, Left(ServerFailure('Server error')));
+      expect(
+          result,
+          Left<JobFailure, List<SalaryEstimationEntity>>(
+              ServerFailure('Server error: Server error')));
       verify(mockRepository.getSalaryEstimation(
         jobTitle: tJobTitle,
         location: tLocation,
+        radius: tRadius,
+      ));
+      verifyNoMoreInteractions(mockRepository);
+    });
+
+    test('should return InputFailure when job title is invalid', () async {
+      // Arrange
+      final invalidJobTitle = ''; // Empty job title
+      when(mockRepository.getSalaryEstimation(
+        jobTitle: invalidJobTitle,
+        location: tLocation,
+        radius: tRadius,
+      )).thenAnswer((_) async => Left(InputFailure('Invalid job title')));
+
+      // Act
+      final result = await useCase(
+        jobTitle: invalidJobTitle,
+        location: tLocation,
+        radius: tRadius,
+      );
+
+      // Assert
+      expect(
+          result,
+          Left<JobFailure, List<SalaryEstimationEntity>>(
+              InputFailure('Input is invalid: Invalid job title')));
+      verify(mockRepository.getSalaryEstimation(
+        jobTitle: invalidJobTitle,
+        location: tLocation,
+        radius: tRadius,
+      ));
+      verifyNoMoreInteractions(mockRepository);
+    });
+
+    test('should return InputFailure when location is invalid', () async {
+      // Arrange
+      final invalidLocation = ''; // Empty location
+      when(mockRepository.getSalaryEstimation(
+        jobTitle: tJobTitle,
+        location: invalidLocation,
+        radius: tRadius,
+      )).thenAnswer((_) async => Left(InputFailure('Invalid location')));
+
+      // Act
+      final result = await useCase(
+        jobTitle: tJobTitle,
+        location: invalidLocation,
+        radius: tRadius,
+      );
+
+      // Assert
+      expect(
+          result,
+          Left<JobFailure, List<SalaryEstimationEntity>>(
+              InputFailure('Input is invalid: Invalid location')));
+      verify(mockRepository.getSalaryEstimation(
+        jobTitle: tJobTitle,
+        location: invalidLocation,
         radius: tRadius,
       ));
       verifyNoMoreInteractions(mockRepository);
@@ -108,6 +169,7 @@ void main() {
 
       // Assert
       expect(result, isA<Right<JobFailure, List<SalaryEstimationEntity>>>());
+      expect(result.fold((l) => null, (r) => r), equals([]));
       verify(mockRepository.getSalaryEstimation(
         jobTitle: tJobTitle,
         location: tLocation,
@@ -116,72 +178,61 @@ void main() {
       verifyNoMoreInteractions(mockRepository);
     });
 
-    test('should return failure when job title is invalid', () async {
+    test('should return ServerFailure for unexpected errors', () async {
       // Arrange
-      final invalidJobTitle = ''; // Empty job title
-
       when(mockRepository.getSalaryEstimation(
-        jobTitle: invalidJobTitle,
+        jobTitle: tJobTitle,
         location: tLocation,
         radius: tRadius,
-      )).thenAnswer((_) async => Left(InputFailure('Invalid job title')));
+      )).thenAnswer((_) async => Left(ServerFailure('Unexpected exception')));
 
       // Act
       final result = await useCase(
-        jobTitle: invalidJobTitle,
+        jobTitle: tJobTitle,
         location: tLocation,
         radius: tRadius,
       );
 
       // Assert
-      expect(result, Left(InputFailure('Invalid job title')));
+      expect(
+          result,
+          Left<JobFailure, List<SalaryEstimationEntity>>(
+              ServerFailure('Server error: Unexpected exception')));
       verify(mockRepository.getSalaryEstimation(
-        jobTitle: invalidJobTitle,
+        jobTitle: tJobTitle,
         location: tLocation,
         radius: tRadius,
       ));
       verifyNoMoreInteractions(mockRepository);
     });
 
-    test('should return failure when location is invalid', () async {
+    test('should return ServerFailure for unexpected exceptions', () async {
       // Arrange
-      final invalidLocation = ''; // Empty location
-
       when(mockRepository.getSalaryEstimation(
         jobTitle: tJobTitle,
-        location: invalidLocation,
+        location: tLocation,
         radius: tRadius,
-      )).thenAnswer((_) async => Left(InputFailure('Invalid location')));
+      )).thenAnswer((_) async => Left(UnknownFailure(
+          'Unexpected exception'))); // Simulate a generic exception
 
       // Act
       final result = await useCase(
         jobTitle: tJobTitle,
-        location: invalidLocation,
+        location: tLocation,
         radius: tRadius,
       );
 
       // Assert
-      expect(result, Left(InputFailure('Invalid location')));
+      expect(
+          result,
+          Left<JobFailure, List<SalaryEstimationEntity>>(
+              UnknownFailure('Unexpected error occurred')));
       verify(mockRepository.getSalaryEstimation(
         jobTitle: tJobTitle,
-        location: invalidLocation,
+        location: tLocation,
         radius: tRadius,
       ));
       verifyNoMoreInteractions(mockRepository);
     });
-
-    /// Test 6: Null safety check (ensure non-nullable values)
-    // test('should throw an assertion error when required parameters are invalid', () {
-    //   // Act & Assert
-    //   expect(
-    //         () => useCase(jobTitle: '', location: tLocation, radius: tRadius),  // Invalid empty job title
-    //     throwsA(isA<AssertionError>()),
-    //   );
-    //
-    //   expect(
-    //         () => useCase(jobTitle: tJobTitle, location: '', radius: tRadius),  // Invalid empty location
-    //     throwsA(isA<AssertionError>()),
-    //   );
-    // });
   });
 }
