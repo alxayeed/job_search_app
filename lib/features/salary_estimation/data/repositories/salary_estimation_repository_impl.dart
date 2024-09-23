@@ -21,12 +21,22 @@ class SalaryEstimationRepositoryImpl implements SalaryEstimationRepository {
           await remoteDataSource.getSalaryEstimation(
         jobTitle: jobTitle,
         location: location,
-        radius: radius, // Ensure to include radius if needed
+        radius: radius,
       );
 
       final data = result['data'] as List<dynamic>?;
       if (data == null || data.isEmpty) {
         return Left(InputFailure('Data is null or not in the expected format'));
+      }
+
+      // Validate required fields
+      for (var jobJson in data) {
+        if (!jobJson.containsKey('publisher_name') ||
+            !jobJson.containsKey('min_salary') ||
+            !jobJson.containsKey('max_salary') ||
+            !jobJson.containsKey('median_salary')) {
+          return Left(InputFailure('Data does not contain required fields'));
+        }
       }
 
       final List<SalaryEstimationModel> salaryEstimationModels = data
@@ -38,11 +48,9 @@ class SalaryEstimationRepositoryImpl implements SalaryEstimationRepository {
 
       return Right(salaryEstimationEntities);
     } catch (e) {
-      // Handle specific errors
       if (e is JobFailure) {
-        return Left(e); // Propagate specific JobFailure
+        return Left(e);
       }
-      // General fallback for unexpected errors
       return Left(
           ServerFailure('An unexpected error occurred: ${e.toString()}'));
     }

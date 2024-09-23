@@ -1,7 +1,7 @@
-import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:dartz/dartz.dart';
 import 'package:job_search_app/core/error/job_failure.dart';
 import 'package:job_search_app/features/salary_estimation/data/repositories/salary_estimation_repository_impl.dart';
 import 'package:job_search_app/features/salary_estimation/domain/entities/salary_estimation_entity.dart';
@@ -130,6 +130,59 @@ void main() {
       // Assert
       expect(result, isA<Left<JobFailure, List<SalaryEstimationEntity>>>());
       expect(result.fold((l) => l, (r) => null), isA<InputFailure>());
+    });
+
+    // New Tests
+    test(
+        'should return InputFailure when data does not contain required fields',
+        () async {
+      // Arrange
+      final invalidSalaryData = [
+        {
+          "location": "New York",
+          "job_title": "Software Engineer",
+          // Missing fields
+        },
+      ];
+
+      when(mockDatasource.getSalaryEstimation(
+              jobTitle: tJobTitle, location: tLocation, radius: tRadius))
+          .thenAnswer((_) async => {'data': invalidSalaryData});
+
+      // Act
+      final result = await repository.getSalaryEstimation(
+        jobTitle: tJobTitle,
+        location: tLocation,
+        radius: tRadius,
+      );
+
+      // Assert
+      expect(result.isLeft(), true);
+      expect(result, isA<Left<JobFailure, List<SalaryEstimationEntity>>>());
+      expect(result.fold((l) => l, (r) => null), isA<InputFailure>());
+      verify(mockDatasource.getSalaryEstimation(
+          jobTitle: tJobTitle, location: tLocation, radius: tRadius));
+    });
+
+    test('should handle unexpected error types gracefully', () async {
+      // Arrange
+      when(mockDatasource.getSalaryEstimation(
+              jobTitle: tJobTitle, location: tLocation, radius: tRadius))
+          .thenThrow(Exception('Some unexpected error'));
+
+      // Act
+      final result = await repository.getSalaryEstimation(
+        jobTitle: tJobTitle,
+        location: tLocation,
+        radius: tRadius,
+      );
+
+      // Assert
+      expect(result.isLeft(), true);
+      expect(result, isA<Left<JobFailure, List<SalaryEstimationEntity>>>());
+      expect(result.fold((l) => l, (r) => null), isA<ServerFailure>());
+      verify(mockDatasource.getSalaryEstimation(
+          jobTitle: tJobTitle, location: tLocation, radius: tRadius));
     });
   });
 }

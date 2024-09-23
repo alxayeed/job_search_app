@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:job_search_app/core/constants/app_strings.dart';
 import 'package:job_search_app/features/salary_estimation/domain/entities/salary_estimation_entity.dart';
 
 import '../pages/salary_estimation_details_screen.dart';
@@ -46,7 +47,7 @@ class SalaryEstimationCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      entity.jobTitle ?? 'No Title',
+                      entity.jobTitle ?? AppStrings.notApplicable,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: Colors.black87,
@@ -54,7 +55,7 @@ class SalaryEstimationCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 8.0),
                     Text(
-                      'Location: ${entity.location ?? 'No Location'}',
+                      'Location: ${entity.location ?? AppStrings.notApplicable}',
                       style: Theme.of(context)
                           .textTheme
                           .titleMedium
@@ -62,7 +63,7 @@ class SalaryEstimationCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 8.0),
                     Text(
-                      'Publisher: ${entity.publisherName ?? 'No Publisher'}',
+                      'Publisher: ${entity.publisherName ?? AppStrings.notApplicable}',
                       style: Theme.of(context)
                           .textTheme
                           .titleMedium
@@ -70,7 +71,7 @@ class SalaryEstimationCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 8.0),
                     Text(
-                      'Min Salary: \$${entity.minimumSalary?.toStringAsFixed(2) ?? '0.00'}',
+                      'Min Salary: ${entity.minimumSalary?.toStringAsFixed(2) ?? '0.00'}',
                       style: Theme.of(context)
                           .textTheme
                           .titleMedium
@@ -78,7 +79,7 @@ class SalaryEstimationCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4.0),
                     Text(
-                      'Max Salary: \$${entity.maximumSalary?.toStringAsFixed(2) ?? '0.00'}',
+                      'Max Salary: ${entity.maximumSalary?.toStringAsFixed(2) ?? '0.00'}',
                       style: Theme.of(context)
                           .textTheme
                           .titleMedium
