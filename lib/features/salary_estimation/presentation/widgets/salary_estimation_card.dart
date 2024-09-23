@@ -70,7 +70,7 @@ class SalaryEstimationCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 8.0),
                     Text(
-                      'Min Salary: \$${entity.minimumSalary?.toStringAsFixed(2) ?? '0.00'}',
+                      'Min Salary: ${entity.minimumSalary?.toStringAsFixed(2) ?? '0.00'}',
                       style: Theme.of(context)
                           .textTheme
                           .titleMedium
@@ -78,7 +78,7 @@ class SalaryEstimationCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4.0),
                     Text(
-                      'Max Salary: \$${entity.maximumSalary?.toStringAsFixed(2) ?? '0.00'}',
+                      'Max Salary: ${entity.maximumSalary?.toStringAsFixed(2) ?? '0.00'}',
                       style: Theme.of(context)
                           .textTheme
                           .titleMedium

@@ -42,7 +42,11 @@ class _JobSearchBodyState extends State<SalaryEstimationBody> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _buildFloatingFilters(),
+        SalarySearchFormWidget(
+          jobTitleController: _jobTitleController,
+          locationController: _locationController,
+          buildContext: context,
+        ),
         Expanded(
           child: BlocBuilder<SalaryEstimationBloc, SalaryEstimationState>(
             builder: (context, state) {
@@ -81,90 +85,6 @@ class _JobSearchBodyState extends State<SalaryEstimationBody> {
     );
   }
 
-  Widget _buildFloatingFilters() {
-    return Container(
-      padding: EdgeInsets.fromLTRB(16, 16, 16, 16),
-      margin: EdgeInsets.only(top: 10),
-      child: Material(
-        elevation: 10,
-        borderRadius: BorderRadius.circular(20),
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextField(
-                controller: _jobTitleController,
-                onTapOutside: (event) {
-                  FocusManager.instance.primaryFocus?.unfocus();
-                },
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                  hintText: 'Enter Job Title...',
-                  prefixIcon: Icon(Icons.search, color: Colors.blueAccent),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-                ),
-                // onSubmitted: (_) => _searchSalaryEstimation(),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                controller: _locationController,
-                onTapOutside: (event) {
-                  FocusManager.instance.primaryFocus?.unfocus();
-                },
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                  hintText: 'Enter Location...',
-                  prefixIcon: Icon(Icons.search, color: Colors.blueAccent),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-                ),
-                onSubmitted: (_) => _searchSalaryEstimation(),
-              ),
-
-              SizedBox(height: 10),
-
-              // Search Button
-              Center(
-                child: ElevatedButton(
-                  onPressed: _searchSalaryEstimation,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    elevation: 5,
-                  ),
-                  child: Text(
-                    'Search',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildErrorState(SalaryEstimationError state) {
     return Center(
       child: Column(
@@ -183,17 +103,6 @@ class _JobSearchBodyState extends State<SalaryEstimationBody> {
             textAlign: TextAlign.center,
           ),
         ],
-      ),
-    );
-  }
-
-  void _searchSalaryEstimation() {
-    BlocProvider.of<SalaryEstimationBloc>(context).add(
-      //NodeJS Developer
-      //New-York, NY, USA
-      GetSalaryEstimationsEvent(
-        jobTitle: _jobTitleController.text,
-        location: _locationController.text,
       ),
     );
   }
