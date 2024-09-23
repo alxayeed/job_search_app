@@ -45,6 +45,8 @@ class SalaryEstimationBloc
         return 'Network failure. Please check your connection.';
       case ServerFailure:
         return 'Server error. Please try again later.';
+      case InputFailure:
+        return 'Input is invalid: Data is null or not in the expected format';
       default:
         return 'An unexpected error occurred.';
     }

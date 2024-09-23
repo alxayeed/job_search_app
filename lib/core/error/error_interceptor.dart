@@ -20,7 +20,9 @@ class ErrorInterceptor extends Interceptor {
         break;
       case DioExceptionType.badResponse:
         // Handle different response statuses
-        if (err.response?.statusCode == 404) {
+        if (err.response?.statusCode == 400) {
+          failure = NotFoundFailure('ERROR: $apiMessage');
+        } else if (err.response?.statusCode == 404) {
           failure = NotFoundFailure('Resource not found: $apiMessage');
         } else if (err.response?.statusCode == 500) {
           failure = ServerFailure('Server error: $apiMessage');

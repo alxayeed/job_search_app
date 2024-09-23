@@ -13,10 +13,24 @@ class GetSalaryEstimationUseCase {
     required String location,
     String radius = "100",
   }) async {
-    return await salaryEstimationRepository.getSalaryEstimation(
+    final result = await salaryEstimationRepository.getSalaryEstimation(
       jobTitle: jobTitle,
       location: location,
       radius: radius,
+    );
+
+    return result.fold(
+      (failure) {
+        // Map failures to centralized JobFailure types
+        if (failure is InputFailure) {
+          return Left(InputFailure('Input is invalid: ${failure.message}'));
+        } else if (failure is ServerFailure) {
+          return Left(ServerFailure('Server error: ${failure.message}'));
+        }
+        // Handle any unexpected errors
+        return Left(UnknownFailure('Unexpected error occurred'));
+      },
+      (salaryEstimationEntities) => Right(salaryEstimationEntities),
     );
   }
 }

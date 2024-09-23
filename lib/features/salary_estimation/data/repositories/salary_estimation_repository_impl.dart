@@ -21,10 +21,11 @@ class SalaryEstimationRepositoryImpl implements SalaryEstimationRepository {
           await remoteDataSource.getSalaryEstimation(
         jobTitle: jobTitle,
         location: location,
+        radius: radius, // Ensure to include radius if needed
       );
 
-      final data = result['data'] as List<dynamic>?; // Cast to List<dynamic>
-      if (data == null) {
+      final data = result['data'] as List<dynamic>?;
+      if (data == null || data.isEmpty) {
         return Left(InputFailure('Data is null or not in the expected format'));
       }
 
@@ -37,8 +38,13 @@ class SalaryEstimationRepositoryImpl implements SalaryEstimationRepository {
 
       return Right(salaryEstimationEntities);
     } catch (e) {
-      print('Exception: $e');
-      return Left(InputFailure('Error occurred: ${e.toString()}'));
+      // Handle specific errors
+      if (e is JobFailure) {
+        return Left(e); // Propagate specific JobFailure
+      }
+      // General fallback for unexpected errors
+      return Left(
+          ServerFailure('An unexpected error occurred: ${e.toString()}'));
     }
   }
 }
