@@ -23,6 +23,11 @@ final class SalaryEstimationLoaded extends SalaryEstimationState {
   List<Object> get props => [salaryEstimations];
 }
 
+final class SalaryEstimationEmpty extends SalaryEstimationState {
+  @override
+  List<Object> get props => [];
+}
+
 final class SalaryEstimationError extends SalaryEstimationState {
   final String message;
 

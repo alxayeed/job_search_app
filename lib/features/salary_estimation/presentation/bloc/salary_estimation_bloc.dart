@@ -14,6 +14,7 @@ class SalaryEstimationBloc
 
   SalaryEstimationBloc({required this.getSalaryEstimationUseCase})
       : super(SalaryEstimationInitial()) {
+    // Handle salary estimation event
     on<GetSalaryEstimationsEvent>((event, emit) async {
       emit(SalaryEstimationLoading());
 
@@ -26,13 +27,18 @@ class SalaryEstimationBloc
 
       result.fold(
         (failure) {
-          // Emit an error state with a specific message
           emit(SalaryEstimationError(message: _mapFailureToMessage(failure)));
         },
-        (salaryEstimations) => emit(SalaryEstimationLoaded(salaryEstimations)),
+        (salaryEstimations) {
+          if (salaryEstimations.isEmpty) {
+            emit(SalaryEstimationEmpty());
+          } else {
+            emit(SalaryEstimationLoaded(salaryEstimations));
+          }
+        },
       );
     });
-
+    // Handle resetting salary estimations
     on<ResetSalaryEstimationsEvent>((event, emit) async {
       emit(SalaryEstimationInitial());
     });
@@ -46,9 +52,9 @@ class SalaryEstimationBloc
       case ServerFailure:
         return 'Server error. Please try again later.';
       case InputFailure:
-        return 'Input is invalid: Data is null or not in the expected format';
+        return 'Invalid job title or location';
       default:
-        return 'An unexpected error occurred.';
+        return 'An unexpected error occurred. Please try again.';
     }
   }
 }
