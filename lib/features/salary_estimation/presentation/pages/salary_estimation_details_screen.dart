@@ -11,7 +11,7 @@ class SalaryEstimationDetailsScreen extends StatelessWidget {
       : super(key: key);
 
   Future<void> _launchURL() async {
-    final url = Uri.parse(entity.publisherLink!);
+    final url = Uri.parse(entity.publisherLink ?? "");
     if (!await launchUrl(
       url,
       mode: LaunchMode.externalApplication,
@@ -38,7 +38,7 @@ class SalaryEstimationDetailsScreen extends StatelessWidget {
             color: Colors.grey[300],
             padding: const EdgeInsets.all(16.0),
             child: Text(
-              entity.jobTitle ?? 'No Title',
+              entity.jobTitle ?? AppStrings.notApplicable,
               style: Theme.of(context)
                   .textTheme
                   .headlineSmall
@@ -47,10 +47,10 @@ class SalaryEstimationDetailsScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16.0),
           _buildSection(context, Icons.location_on, 'Location',
-              entity.location ?? 'No Location'),
+              entity.location ?? AppStrings.notApplicable),
           const SizedBox(height: 8.0),
           _buildClickableSection(context, Icons.business, 'Publisher',
-              entity.publisherName ?? 'No Publisher',
+              entity.publisherName ?? AppStrings.notApplicable,
               onTap: _launchURL),
           const SizedBox(height: 8.0),
           _buildSection(context, Icons.trending_down, 'Min Salary',
