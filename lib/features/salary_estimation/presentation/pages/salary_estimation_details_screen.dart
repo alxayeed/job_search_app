@@ -21,60 +21,56 @@ class SalaryEstimationDetailsScreen extends StatelessWidget {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text('Salary Details'),
-      // ),
       appBar: AppBar(
         backgroundColor: Colors.blueAccent,
         foregroundColor: Colors.white,
         title: Text('${entity.jobTitle ?? AppStrings.notApplicable}'),
       ),
-      body: Padding(
+      body: ListView(
+        // Use ListView for scrolling
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: double.infinity,
-              color: Colors.grey[300],
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                entity.jobTitle ?? 'No Title',
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineSmall
-                    ?.copyWith(fontWeight: FontWeight.bold),
-              ),
+        children: [
+          Container(
+            width: double.infinity,
+            color: Colors.grey[300],
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              entity.jobTitle ?? 'No Title',
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineSmall
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 16.0),
-            _buildSection(context, Icons.location_on, 'Location',
-                entity.location ?? 'No Location'),
-            const SizedBox(height: 8.0),
-            _buildClickableSection(context, Icons.business, 'Publisher',
-                entity.publisherName ?? 'No Publisher',
-                onTap: _launchURL),
-            const SizedBox(height: 8.0),
-            _buildSection(context, Icons.trending_down, 'Min Salary',
-                '${entity.minimumSalary?.toStringAsFixed(2) ?? '0.00'}',
-                color: Colors.green),
-            const SizedBox(height: 8.0),
-            _buildSection(context, Icons.trending_up, 'Max Salary',
-                '${entity.maximumSalary?.toStringAsFixed(2) ?? '0.00'}',
-                color: Colors.red),
-            const SizedBox(height: 8.0),
-            _buildSection(context, Icons.trending_flat, 'Median Salary',
-                '${entity.medianSalary?.toStringAsFixed(2) ?? '0.00'}',
-                color: Colors.blue),
-            const SizedBox(height: 8.0),
-            _buildSection(context, Icons.calendar_today, 'Salary Period',
-                entity.salaryPeriod ?? 'Not Specified'),
-            const SizedBox(height: 8.0),
-            _buildSection(context, Icons.money, 'Currency',
-                entity.salaryCurrency ?? 'USD'),
-          ],
-        ),
+          ),
+          const SizedBox(height: 16.0),
+          _buildSection(context, Icons.location_on, 'Location',
+              entity.location ?? 'No Location'),
+          const SizedBox(height: 8.0),
+          _buildClickableSection(context, Icons.business, 'Publisher',
+              entity.publisherName ?? 'No Publisher',
+              onTap: _launchURL),
+          const SizedBox(height: 8.0),
+          _buildSection(context, Icons.trending_down, 'Min Salary',
+              '${entity.minimumSalary?.toStringAsFixed(2) ?? '0.00'}',
+              color: Colors.green),
+          const SizedBox(height: 8.0),
+          _buildSection(context, Icons.trending_up, 'Max Salary',
+              '${entity.maximumSalary?.toStringAsFixed(2) ?? '0.00'}',
+              color: Colors.red),
+          const SizedBox(height: 8.0),
+          _buildSection(context, Icons.trending_flat, 'Median Salary',
+              '${entity.medianSalary?.toStringAsFixed(2) ?? '0.00'}',
+              color: Colors.blue),
+          const SizedBox(height: 8.0),
+          _buildSection(context, Icons.calendar_today, 'Salary Period',
+              entity.salaryPeriod ?? 'Not Specified'),
+          const SizedBox(height: 8.0),
+          _buildSection(
+              context, Icons.money, 'Currency', entity.salaryCurrency ?? 'USD'),
+        ],
       ),
     );
   }
