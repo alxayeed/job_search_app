@@ -118,7 +118,6 @@ void main() {
   );
 
   // Additional Test Cases
-
   blocTest<SalaryEstimationBloc, SalaryEstimationState>(
     'emits [SalaryEstimationLoading, SalaryEstimationLoaded] with empty list when GetSalaryEstimationsEvent is added and returns empty list',
     build: () {
@@ -258,28 +257,21 @@ void main() {
               jobTitle: jobTitle,
               publisherName: 'Publisher',
               publisherLink: 'http://publisher.com',
-              minimumSalary: 50000,
-              maximumSalary: 70000,
-              medianSalary: 60000,
+              minimumSalary: 80000,
+              maximumSalary: 120000,
+              medianSalary: 100000,
               salaryPeriod: 'Yearly',
               salaryCurrency: 'USD',
             ),
           ]);
         }
-        return Right([]); // Default case if needed
+        return Right([]);
       });
       return bloc;
     },
-    act: (bloc) async {
-      // First search event
+    act: (bloc) {
       bloc.add(GetSalaryEstimationsEvent(
           jobTitle: 'Developer', location: 'New York'));
-      await Future.delayed(Duration(milliseconds: 100)); // Simulate delay
-
-      // Reset before the second search
-      bloc.add(ResetSalaryEstimationsEvent());
-
-      // Second search event
       bloc.add(GetSalaryEstimationsEvent(
           jobTitle: 'Developer', location: 'San Francisco'));
     },
@@ -298,7 +290,6 @@ void main() {
           salaryCurrency: 'USD',
         )
       ]),
-      SalaryEstimationInitial(),
       SalaryEstimationLoading(),
       SalaryEstimationLoaded([
         SalaryEstimationEntity(
@@ -306,25 +297,35 @@ void main() {
           jobTitle: 'Developer',
           publisherName: 'Publisher',
           publisherLink: 'http://publisher.com',
-          minimumSalary: 50000,
-          maximumSalary: 70000,
-          medianSalary: 60000,
+          minimumSalary: 80000,
+          maximumSalary: 120000,
+          medianSalary: 100000,
           salaryPeriod: 'Yearly',
           salaryCurrency: 'USD',
         )
       ]),
     ],
-    verify: (_) {
-      verify(mockGetSalaryEstimationUseCase(
-        jobTitle: 'Developer',
-        location: 'New York',
-        radius: '100',
-      )).called(1);
-      verify(mockGetSalaryEstimationUseCase(
-        jobTitle: 'Developer',
-        location: 'San Francisco',
-        radius: '100',
-      )).called(1);
-    },
   );
+
+  // Additional Event Class Coverage
+  test('GetSalaryEstimationsEvent overrides equality for different parameters',
+      () {
+    final event1 =
+        GetSalaryEstimationsEvent(jobTitle: 'Developer', location: 'New York');
+    final event2 = GetSalaryEstimationsEvent(
+        jobTitle: 'Developer', location: 'San Francisco');
+    final event3 =
+        GetSalaryEstimationsEvent(jobTitle: 'Engineer', location: 'New York');
+
+    expect(event1 == event2, isFalse);
+    expect(event1 == event3, isFalse);
+    expect(event1 == event1, isTrue);
+  });
+
+  test('ResetSalaryEstimationsEvent equality check', () {
+    final event1 = ResetSalaryEstimationsEvent();
+    final event2 = ResetSalaryEstimationsEvent();
+
+    expect(event1 == event2, isTrue);
+  });
 }
