@@ -45,7 +45,6 @@ class _JobSearchBodyState extends State<SalaryEstimationBody> {
         SalarySearchFormWidget(
           jobTitleController: _jobTitleController,
           locationController: _locationController,
-          buildContext: context,
         ),
         Expanded(
           child: BlocBuilder<SalaryEstimationBloc, SalaryEstimationState>(
