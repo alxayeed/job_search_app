@@ -17,6 +17,11 @@ Below are some screenshots showcasing the features of the app:
     <td><img src="ss/ss5.png" width="100%" height="70%" alt="Saved Jobs Screen"/></td>
     <td><img src="ss/ss6.png" width="100%" height="70%" alt="Loading State"/></td>
   </tr>
+  <tr>
+    <td><img src="ss/ss7.png" width="100%" height="70%" alt="Bookmarked Jobs"/></td>
+    <td><img src="ss/ss8.png" width="100%" height="70%" alt="Saved Jobs Screen"/></td>
+    <td><img src="ss/ss9.png" width="100%" height="70%" alt="Loading State"/></td>
+  </tr>
 </table>
 <br/>
 
@@ -75,7 +80,6 @@ A: Use a BlocListener or NavigatorObserver to trigger a state refresh when retur
 
 - [Flutter](https://flutter.dev/)
 - [Dart](https://dart.dev/)
-- [Isar Database](https://isar.dev/)
 - [Bloc Library](https://bloclibrary.dev/)
 
 ## 📞 Contact
