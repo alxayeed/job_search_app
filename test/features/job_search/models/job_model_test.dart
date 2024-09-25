@@ -240,5 +240,66 @@ void main() {
       expect(
           updatedModel.jobId, tJobId); // Ensure other fields remain unchanged
     });
+
+    test('toEntity should return a valid JobEntity', () {
+      final model = JobModel(
+        jobId: tJobId,
+        employerName: tEmployerName,
+        employerLogo: tEmployerLogo,
+        employerWebsite: tEmployerWebsite,
+        jobEmploymentType: tJobEmploymentType,
+        jobTitle: tJobTitle,
+        jobApplyLink: tJobApplyLink,
+        jobApplyIsDirect: tJobApplyIsDirect,
+        applyOptions: [tApplyOptionModel],
+        jobDescription: tJobDescription,
+        jobIsRemote: tJobIsRemote,
+        jobPostedAtDatetimeUtc: DateTime.parse(tJobPostedAtDatetimeUtc),
+        jobCity: tJobCity,
+        jobCountry: tJobCountry,
+        jobBenefits: tJobBenefits,
+        jobGoogleLink: tJobGoogleLink,
+        jobRequiredExperience: tJobRequiredExperienceModel,
+        jobSalaryCurrency: tJobSalaryCurrency,
+        jobSalaryPeriod: tJobSalaryPeriod,
+        jobHighlights: tJobHighlightsModel,
+        jobJobTitle: tJobJobTitle,
+        jobPostingLanguage: tJobPostingLanguage,
+        isBookmarked: tIsBookmarked,
+      );
+
+      final jobEntity = model.toEntity();
+
+      expect(jobEntity.jobId, tJobId);
+      expect(jobEntity.employerName, tEmployerName);
+      expect(jobEntity.employerLogo, tEmployerLogo);
+      expect(jobEntity.employerWebsite, tEmployerWebsite);
+      expect(jobEntity.jobEmploymentType, tJobEmploymentType);
+      expect(jobEntity.jobTitle, tJobTitle);
+      expect(jobEntity.jobApplyLink, tJobApplyLink);
+      expect(jobEntity.jobApplyIsDirect, tJobApplyIsDirect);
+      expect(jobEntity.applyOptions, [
+        tApplyOptionModel.toEntity()
+      ]); // Assuming you have toEntity in ApplyOptionModel
+      expect(jobEntity.jobDescription, tJobDescription);
+      expect(jobEntity.jobIsRemote, tJobIsRemote);
+      expect(jobEntity.jobPostedAtDatetimeUtc,
+          DateTime.parse(tJobPostedAtDatetimeUtc));
+      expect(jobEntity.jobCity, tJobCity);
+      expect(jobEntity.jobCountry, tJobCountry);
+      expect(jobEntity.jobBenefits, tJobBenefits);
+      expect(jobEntity.jobGoogleLink, tJobGoogleLink);
+      expect(
+          jobEntity.jobRequiredExperience,
+          tJobRequiredExperienceModel
+              .toEntity()); // Assuming toEntity is implemented
+      expect(jobEntity.jobSalaryCurrency, tJobSalaryCurrency);
+      expect(jobEntity.jobSalaryPeriod, tJobSalaryPeriod);
+      expect(jobEntity.jobHighlights,
+          tJobHighlightsModel.toEntity()); // Assuming toEntity is implemented
+      expect(jobEntity.jobJobTitle, tJobJobTitle);
+      expect(jobEntity.jobPostingLanguage, tJobPostingLanguage);
+      expect(jobEntity.isBookmarked, tIsBookmarked);
+    });
   });
 }
