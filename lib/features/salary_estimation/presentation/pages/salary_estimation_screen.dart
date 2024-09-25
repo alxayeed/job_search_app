@@ -6,6 +6,7 @@ import 'package:job_search_app/features/salary_estimation/presentation/bloc/bloc
 import 'package:lottie/lottie.dart';
 
 import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/widgets/show_error_widget.dart';
 import '../../../job_search/presentation/widgets/widgets.dart';
 import '../widgets/widgets.dart';
 
@@ -58,7 +59,7 @@ class _JobSearchBodyState extends State<SalaryEstimationBody> {
                   ),
                 );
               } else if (state is SalaryEstimationError) {
-                return _buildErrorState(state);
+                return ShowErrorWidget(message: state.message.toString());
               } else if (state is SalaryEstimationLoaded) {
                 return ListView.builder(
                   padding: EdgeInsets.all(16.0),
@@ -81,28 +82,6 @@ class _JobSearchBodyState extends State<SalaryEstimationBody> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildErrorState(SalaryEstimationError state) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.error_outline, color: Colors.red, size: 48),
-          SizedBox(height: 8),
-          Text(
-            'Something went wrong!',
-            style: TextStyle(fontSize: 18, color: Colors.red),
-          ),
-          SizedBox(height: 4),
-          Text(
-            state.message.toString(),
-            style: TextStyle(color: Colors.grey),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
     );
   }
 }
