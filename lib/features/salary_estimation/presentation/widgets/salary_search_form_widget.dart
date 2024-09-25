@@ -6,13 +6,11 @@ import '../bloc/salary_estimation_bloc.dart';
 class SalarySearchFormWidget extends StatefulWidget {
   final TextEditingController jobTitleController;
   final TextEditingController locationController;
-  final BuildContext buildContext;
 
   const SalarySearchFormWidget({
     Key? key,
     required this.jobTitleController,
     required this.locationController,
-    required this.buildContext,
   }) : super(key: key);
 
   @override
@@ -98,11 +96,11 @@ class _SalarySearchFormWidgetState extends State<SalarySearchFormWidget> {
 
   void _searchSalaryEstimation() {
     setState(() {
-      _isSubmitted = true; // Set the flag when the button is pressed
+      _isSubmitted = true;
     });
 
     if (_formKey.currentState!.validate()) {
-      BlocProvider.of<SalaryEstimationBloc>(widget.buildContext).add(
+      BlocProvider.of<SalaryEstimationBloc>(context).add(
         GetSalaryEstimationsEvent(
           jobTitle: widget.jobTitleController.text,
           location: widget.locationController.text,
