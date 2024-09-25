@@ -4,20 +4,31 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:job_search_app/core/widgets/custom_text_field.dart';
 import 'package:job_search_app/features/salary_estimation/presentation/bloc/salary_estimation_bloc.dart';
 import 'package:job_search_app/features/salary_estimation/presentation/widgets/salary_search_form_widget.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'salary_search_form_widget_test.mocks.dart';
 
-class MockSalaryEstimationBloc extends Mock implements SalaryEstimationBloc {}
-
+@GenerateMocks([SalaryEstimationBloc])
 void main() {
   group('SalarySearchFormWidget Tests', () {
     late TextEditingController jobTitleController;
     late TextEditingController locationController;
     late MockSalaryEstimationBloc salaryEstimationBloc;
 
+    setUpAll(() {
+      provideDummy<SalaryEstimationState>(SalaryEstimationInitial());
+    });
+
     setUp(() {
       jobTitleController = TextEditingController();
       locationController = TextEditingController();
       salaryEstimationBloc = MockSalaryEstimationBloc();
+
+      // Stub the state to return an initial state
+      when(salaryEstimationBloc.state).thenReturn(SalaryEstimationInitial());
+
+      // Stub the stream to return an empty stream
+      when(salaryEstimationBloc.stream).thenAnswer((_) => Stream.empty());
     });
 
     tearDown(() {
@@ -180,6 +191,40 @@ void main() {
       // Assert: Check if controllers are updated
       expect(jobTitleController.text, 'Software Engineer');
       expect(locationController.text, 'New York');
+    });
+
+    testWidgets('should dispatch GetSalaryEstimationsEvent when form is valid',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BlocProvider<SalaryEstimationBloc>(
+            create: (context) => salaryEstimationBloc,
+            child: Scaffold(
+              body: SalarySearchFormWidget(
+                jobTitleController: jobTitleController,
+                locationController: locationController,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Act: Fill the form with valid data
+      await tester.enterText(find.byType(TextField).first, 'Software Engineer');
+      await tester.enterText(find.byType(TextField).last, 'New York');
+      await tester.pump(); // Rebuild after text entry
+
+      // Act: Tap the Search button
+      await tester.tap(find.text('Search'));
+      await tester.pump(); // Rebuild after interaction
+
+      // Assert: Verify that the event was added to the bloc
+      verify(salaryEstimationBloc.add(
+        GetSalaryEstimationsEvent(
+          jobTitle: 'Software Engineer',
+          location: 'New York',
+        ),
+      )).called(1);
     });
   });
 }
