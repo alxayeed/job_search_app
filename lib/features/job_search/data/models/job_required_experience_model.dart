@@ -15,15 +15,15 @@ class JobRequiredExperienceModel extends JobRequiredExperienceEntity {
 
   factory JobRequiredExperienceModel.fromJson(Map<String, dynamic> json) {
     return JobRequiredExperienceModel(
-      noExperienceRequired:
-          json['no_experience_required'] == 'true' ? true : false,
+      noExperienceRequired: json['no_experience_required'] == true ||
+          json['no_experience_required'] == 'true',
       requiredExperienceInMonths: json['required_experience_in_months'] != null
           ? int.tryParse(json['required_experience_in_months'].toString())
           : null,
-      experienceMentioned:
-          json['experience_mentioned'] == 'true' ? true : false,
-      experiencePreferred:
-          json['experience_preferred'] == 'true' ? true : false,
+      experienceMentioned: json['experience_mentioned'] == true ||
+          json['experience_mentioned'] == 'true',
+      experiencePreferred: json['experience_preferred'] == true ||
+          json['experience_preferred'] == 'true',
     );
   }
 
