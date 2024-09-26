@@ -31,7 +31,7 @@ Future<void> init() async {
 
   // Initialize local data source
   sl.registerLazySingleton<JobLocalDataSource>(
-      () => JobLocalDataSourceImpl.new());
+      () => JobLocalDataSourceImpl(storageService: sl<GetStorageService>()));
 
   // Initialize repository
   sl.registerLazySingleton<JobRepository>(

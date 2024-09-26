@@ -14,6 +14,7 @@ abstract class SalaryEstimationDatasource {
 
 class SalaryEstimationRemoteDatasource implements SalaryEstimationDatasource {
   final Dio dio;
+
   SalaryEstimationRemoteDatasource(this.dio);
 
   @override
@@ -38,6 +39,7 @@ class SalaryEstimationRemoteDatasource implements SalaryEstimationDatasource {
     try {
       if (cachedResponse == null) {
         final response = await dio.getUri(uri);
+
         if (response.statusCode == 200) {
           box.write("salary_estimation", response.data);
           return response.data;
@@ -50,9 +52,12 @@ class SalaryEstimationRemoteDatasource implements SalaryEstimationDatasource {
         return cachedResponse;
       }
     } catch (e) {
+      // Handle DioException with a custom failure
       if (e is DioException) {
-        throw ServerFailure('DioException: $e');
+        // You can inspect the DioException here if needed
+        throw ServerFailure('DioException: ${e.message}');
       }
+      // Throw a generic failure for any other exceptions
       throw ServerFailure('An unexpected error occurred: $e');
     }
   }
