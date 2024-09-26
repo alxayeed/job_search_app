@@ -22,14 +22,16 @@ Future<void> init() async {
   // Initialize StorageService
   sl.registerSingleton<GetStorageService>(GetStorageService());
 
-  // Initialize remote data source
+// Initialize remote data sources using the singleton Dio instance
   sl.registerLazySingleton<JobRemoteDataSource>(
-      () => JobRemoteDataSource(sl<DioService>().createDio()));
+      () => JobRemoteDataSourceImpl(sl<DioService>().dio));
+
   sl.registerLazySingleton<SalaryEstimationRemoteDatasource>(
-      () => SalaryEstimationRemoteDatasource(sl<DioService>().createDio()));
+      () => SalaryEstimationRemoteDatasource(sl<DioService>().dio));
 
   // Initialize local data source
-  sl.registerLazySingleton<JobLocalDataSource>(() => JobLocalDataSource.new());
+  sl.registerLazySingleton<JobLocalDataSource>(
+      () => JobLocalDataSourceImpl(storageService: sl<GetStorageService>()));
 
   // Initialize repository
   sl.registerLazySingleton<JobRepository>(

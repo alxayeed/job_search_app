@@ -1,9 +1,9 @@
 // lib/features/job_search/domain/usecases/get_job_details_use_case.dart
 
 import 'package:dartz/dartz.dart';
+import '../../../../core/error/failure.dart';
 import '../entities/job_entity.dart';
 import '../repositories/job_repository.dart';
-import '../../../../core/error/job_failure.dart';
 
 /// Use case for fetching details of a specific job.
 class GetJobDetailsUseCase {
@@ -19,7 +19,7 @@ class GetJobDetailsUseCase {
   /// [jobId] is the unique identifier of the job.
   ///
   /// Returns an [Either] with a [JobFailure] on failure or a [JobEntity] on success.
-  Future<Either<JobFailure, JobEntity>> call(String jobId) async {
+  Future<Either<Failure, JobEntity>> call(String jobId) async {
     return await repository.getJobDetails(jobId);
   }
 }

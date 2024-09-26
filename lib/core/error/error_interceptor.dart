@@ -1,16 +1,16 @@
 import 'package:dio/dio.dart';
-import 'job_failure.dart';
+import 'failure.dart';
 
 class ErrorInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    JobFailure failure;
+    Failure failure;
 
     String apiMessage = err.response?.data['message'] ?? 'An error occurred';
 
     switch (err.type) {
       case DioExceptionType.connectionTimeout:
-        failure = ConnectionFailure('Connection timed out: $apiMessage');
+        failure = TimeoutFailure('Connection timed out: $apiMessage');
         break;
       case DioExceptionType.sendTimeout:
         failure = TimeoutFailure('Request send timed out: $apiMessage');
@@ -19,19 +19,7 @@ class ErrorInterceptor extends Interceptor {
         failure = TimeoutFailure('Response timed out: $apiMessage');
         break;
       case DioExceptionType.badResponse:
-        // Handle different response statuses
-        if (err.response?.statusCode == 400) {
-          failure = NotFoundFailure('ERROR: $apiMessage');
-        } else if (err.response?.statusCode == 404) {
-          failure = NotFoundFailure('Resource not found: $apiMessage');
-        } else if (err.response?.statusCode == 500) {
-          failure = ServerFailure('Server error: $apiMessage');
-        } else if (err.response?.statusCode == 429) {
-          failure = RateLimitExceededFailure('Too many requests: $apiMessage');
-        } else {
-          failure = ServerFailure(
-              'Received invalid status code: ${err.response?.statusCode} - $apiMessage');
-        }
+        failure = _handleBadResponse(err, apiMessage);
         break;
       case DioExceptionType.cancel:
         failure = RequestCancelledFailure('Request was cancelled: $apiMessage');
@@ -42,11 +30,35 @@ class ErrorInterceptor extends Interceptor {
         break;
     }
 
+    // Reject the error with the mapped failure
     handler.reject(DioException(
       requestOptions: err.requestOptions,
       response: err.response,
       type: DioExceptionType.badResponse,
       error: failure,
     ));
+  }
+
+  // Helper function to handle specific status codes
+  Failure _handleBadResponse(DioException err, String apiMessage) {
+    final int? statusCode = err.response?.statusCode;
+
+    if (statusCode == 400) {
+      return InputFailure('Bad request: $apiMessage');
+    } else if (statusCode == 403) {
+      return RateLimitExceededFailure('RateLimitExceeded: $apiMessage');
+    } else if (statusCode == 404) {
+      return NotFoundFailure('Resource not found: $apiMessage');
+    } else if (statusCode == 500) {
+      return ServerFailure('Server error: $apiMessage');
+    } else if (statusCode == 429) {
+      return RateLimitExceededFailure('Too many requests: $apiMessage');
+    } else if (statusCode == 401 || statusCode == 403) {
+      return ServerFailure('Unauthorized/Forbidden access: $apiMessage');
+    } else {
+      return ServerFailure(
+        'Received invalid status code: $statusCode - $apiMessage',
+      );
+    }
   }
 }

@@ -1,9 +1,9 @@
 // lib/features/job_search/domain/usecases/fetch_jobs_use_case.dart
 
 import 'package:dartz/dartz.dart';
+import '../../../../core/error/failure.dart';
 import '../entities/job_entity.dart';
 import '../repositories/job_repository.dart';
-import '../../../../core/error/job_failure.dart';
 
 /// Use case for fetching jobs based on search criteria.
 class FetchJobsUseCase {
@@ -22,7 +22,7 @@ class FetchJobsUseCase {
   /// [datePosted] specifies the date range for job postings.
   ///
   /// Returns an [Either] with a [JobFailure] on failure or a list of [JobEntity] on success.
-  Future<Either<JobFailure, List<JobEntity>>> call({
+  Future<Either<Failure, List<JobEntity>>> call({
     required String query,
     bool remoteJobsOnly = false,
     String employmentType = 'FULLTIME',

@@ -6,7 +6,7 @@
 import 'dart:async' as _i4;
 
 import 'package:dartz/dartz.dart' as _i2;
-import 'package:job_search_app/core/error/job_failure.dart' as _i5;
+import 'package:job_search_app/core/error/failure.dart' as _i5;
 import 'package:job_search_app/features/salary_estimation/domain/entities/entities.dart'
     as _i6;
 import 'package:job_search_app/features/salary_estimation/domain/repositories/salary_estimation_repository.dart'
@@ -46,7 +46,7 @@ class MockSalaryEstimationRepository extends _i1.Mock
   }
 
   @override
-  _i4.Future<_i2.Either<_i5.JobFailure, List<_i6.SalaryEstimationEntity>>>
+  _i4.Future<_i2.Either<_i5.Failure, List<_i6.SalaryEstimationEntity>>>
       getSalaryEstimation({
     required String? jobTitle,
     required String? location,
@@ -63,9 +63,9 @@ class MockSalaryEstimationRepository extends _i1.Mock
               },
             ),
             returnValue: _i4.Future<
-                    _i2.Either<_i5.JobFailure,
+                    _i2.Either<_i5.Failure,
                         List<_i6.SalaryEstimationEntity>>>.value(
-                _FakeEither_0<_i5.JobFailure, List<_i6.SalaryEstimationEntity>>(
+                _FakeEither_0<_i5.Failure, List<_i6.SalaryEstimationEntity>>(
               this,
               Invocation.method(
                 #getSalaryEstimation,
@@ -78,5 +78,5 @@ class MockSalaryEstimationRepository extends _i1.Mock
               ),
             )),
           ) as _i4.Future<
-              _i2.Either<_i5.JobFailure, List<_i6.SalaryEstimationEntity>>>);
+              _i2.Either<_i5.Failure, List<_i6.SalaryEstimationEntity>>>);
 }

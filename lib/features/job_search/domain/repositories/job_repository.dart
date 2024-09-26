@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 
-import '../../../../core/error/job_failure.dart';
+import '../../../../core/error/failure.dart';
 import '../entities/job_entity.dart';
 
 /// Manages job search operations.
@@ -15,7 +15,7 @@ abstract class JobRepository {
   /// Returns an [Either] where:
   /// - Left: [JobFailure] if there was an error.
   /// - Right: List of [JobEntity] matching the criteria.
-  Future<Either<JobFailure, List<JobEntity>>> searchJobs({
+  Future<Either<Failure, List<JobEntity>>> searchJobs({
     required String query,
     bool remoteJobsOnly = false,
     String employmentType = 'FULLTIME',
@@ -29,12 +29,11 @@ abstract class JobRepository {
   /// Returns an [Either] where:
   /// - Left: [JobFailure] if there was an error.
   /// - Right: [JobEntity] with job details.
-  Future<Either<JobFailure, JobEntity>> getJobDetails(String jobId);
+  Future<Either<Failure, JobEntity>> getJobDetails(String jobId);
 
-  Future<Either<JobFailure, JobEntity>> bookmarkJob(JobEntity job);
+  Future<Either<Failure, JobEntity>> bookmarkJob(JobEntity job);
 
-  Future<Either<JobFailure, JobEntity>> removeJobFromBookmark(JobEntity job);
+  Future<Either<Failure, JobEntity>> removeJobFromBookmark(JobEntity job);
 
-  Future<Either<JobFailure, List<JobEntity>>> getAllBookmarkedJobs();
-
+  Future<Either<Failure, List<JobEntity>>> getAllBookmarkedJobs();
 }

@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:job_search_app/core/config/api_config.dart';
-import 'package:job_search_app/core/error/job_failure.dart';
+import 'package:job_search_app/core/error/failure.dart';
 import 'package:job_search_app/features/salary_estimation/data/datasources/salary_remote_data_source.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';

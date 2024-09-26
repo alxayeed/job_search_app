@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:job_search_app/core/error/job_failure.dart';
+import 'package:job_search_app/core/error/failure.dart';
 import 'package:job_search_app/features/salary_estimation/domain/usecases/get_salary_estimation_use_case.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -83,7 +83,7 @@ void main() {
       // Assert
       expect(
           result,
-          Left<JobFailure, List<SalaryEstimationEntity>>(
+          Left<Failure, List<SalaryEstimationEntity>>(
               ServerFailure('Server error: Server error')));
       verify(mockRepository.getSalaryEstimation(
         jobTitle: tJobTitle,
@@ -112,7 +112,7 @@ void main() {
       // Assert
       expect(
           result,
-          Left<JobFailure, List<SalaryEstimationEntity>>(
+          Left<Failure, List<SalaryEstimationEntity>>(
               InputFailure('Input is invalid: Invalid job title')));
       verify(mockRepository.getSalaryEstimation(
         jobTitle: invalidJobTitle,
@@ -141,7 +141,7 @@ void main() {
       // Assert
       expect(
           result,
-          Left<JobFailure, List<SalaryEstimationEntity>>(
+          Left<Failure, List<SalaryEstimationEntity>>(
               InputFailure('Input is invalid: Invalid location')));
       verify(mockRepository.getSalaryEstimation(
         jobTitle: tJobTitle,
@@ -168,7 +168,7 @@ void main() {
       );
 
       // Assert
-      expect(result, isA<Right<JobFailure, List<SalaryEstimationEntity>>>());
+      expect(result, isA<Right<Failure, List<SalaryEstimationEntity>>>());
       expect(result.fold((l) => null, (r) => r), equals([]));
       verify(mockRepository.getSalaryEstimation(
         jobTitle: tJobTitle,
@@ -196,7 +196,7 @@ void main() {
       // Assert
       expect(
           result,
-          Left<JobFailure, List<SalaryEstimationEntity>>(
+          Left<Failure, List<SalaryEstimationEntity>>(
               ServerFailure('Server error: Unexpected exception')));
       verify(mockRepository.getSalaryEstimation(
         jobTitle: tJobTitle,
@@ -225,7 +225,7 @@ void main() {
       // Assert
       expect(
           result,
-          Left<JobFailure, List<SalaryEstimationEntity>>(
+          Left<Failure, List<SalaryEstimationEntity>>(
               UnknownFailure('Unexpected error occurred')));
       verify(mockRepository.getSalaryEstimation(
         jobTitle: tJobTitle,

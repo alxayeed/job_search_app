@@ -2,8 +2,8 @@ import 'package:dartz/dartz.dart';
 import 'package:job_search_app/features/job_search/domain/entities/job_entity.dart';
 import 'package:job_search_app/features/job_search/data/models/job_model.dart';
 import 'package:job_search_app/features/job_search/domain/repositories/job_repository.dart';
-import 'package:job_search_app/core/error/job_failure.dart';
 
+import '../../../../core/error/failure.dart';
 import '../datasources/job_local_data_source.dart';
 import '../datasources/job_remote_data_source.dart';
 
@@ -19,7 +19,7 @@ class JobRepositoryImpl implements JobRepository {
       {required this.remoteDataSource, required this.localDataSource});
 
   @override
-  Future<Either<JobFailure, List<JobEntity>>> searchJobs({
+  Future<Either<Failure, List<JobEntity>>> searchJobs({
     required String query,
     bool remoteJobsOnly = false,
     String employmentType = 'FULLTIME',
@@ -49,7 +49,7 @@ class JobRepositoryImpl implements JobRepository {
   }
 
   @override
-  Future<Either<JobFailure, JobEntity>> getJobDetails(String jobId) async {
+  Future<Either<Failure, JobEntity>> getJobDetails(String jobId) async {
     try {
       JobModel? cachedJob = await localDataSource.getCachedJob(jobId);
 
@@ -72,7 +72,7 @@ class JobRepositoryImpl implements JobRepository {
   }
 
   @override
-  Future<Either<JobFailure, JobEntity>> bookmarkJob(JobEntity job) async {
+  Future<Either<Failure, JobEntity>> bookmarkJob(JobEntity job) async {
     try {
       JobEntity updatedEntity = job.copyWith(isBookmarked: true);
       JobModel jobModel = updatedEntity.toModel();
@@ -85,7 +85,7 @@ class JobRepositoryImpl implements JobRepository {
   }
 
   @override
-  Future<Either<JobFailure, JobEntity>> removeJobFromBookmark(
+  Future<Either<Failure, JobEntity>> removeJobFromBookmark(
       JobEntity job) async {
     try {
       JobEntity updatedEntity = job.copyWith(isBookmarked: false);
@@ -99,7 +99,7 @@ class JobRepositoryImpl implements JobRepository {
   }
 
   @override
-  Future<Either<JobFailure, List<JobEntity>>> getAllBookmarkedJobs() async {
+  Future<Either<Failure, List<JobEntity>>> getAllBookmarkedJobs() async {
     try {
       final List<JobEntity> jobEntities =
           await localDataSource.getAllBookmarkedJobs();

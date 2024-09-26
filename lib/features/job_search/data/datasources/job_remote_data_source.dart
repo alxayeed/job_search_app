@@ -1,13 +1,10 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:job_search_app/core/config/api_config.dart';
-import 'package:flutter/services.dart' show rootBundle;
-
 import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/error/failure.dart';
 import '../../../../core/services/get_storage_service.dart';
 
-abstract class JobDataSource {
+abstract class JobRemoteDataSource {
   Future<Map<String, dynamic>> searchJobs({
     required String query,
     bool remoteJobsOnly = false,
@@ -18,10 +15,10 @@ abstract class JobDataSource {
   Future<Map<String, dynamic>> getJobDetails(String jobId);
 }
 
-class JobRemoteDataSource implements JobDataSource {
+class JobRemoteDataSourceImpl implements JobRemoteDataSource {
   final Dio dio;
 
-  JobRemoteDataSource(this.dio);
+  JobRemoteDataSourceImpl(this.dio);
 
   @override
   Future<Map<String, dynamic>> searchJobs({
@@ -50,19 +47,20 @@ class JobRemoteDataSource implements JobDataSource {
         final response = await dio.getUri(uri);
         if (response.statusCode == 200) {
           box.write("job_results", response.data);
-          // Return the response data
           return response.data;
         } else {
-          // Handle error
-          throw Exception('Failed to load jobs');
+          throw ServerFailure('Failed to load jobs');
         }
       } else {
-        await Future.delayed(Duration(seconds: 3));
+        await Future.delayed(const Duration(seconds: 3));
         return cachedResponse;
       }
+    } on DioException catch (e) {
+      // Throw a default failure if error is null
+      throw e.error ??
+          UnknownFailure('Unknown error occurred while fetching jobs');
     } catch (e) {
-      // Handle exceptions
-      throw Exception('Failed to load jobs: $e');
+      throw UnknownFailure('Unexpected error occurred while fetching jobs');
     }
   }
 
@@ -78,28 +76,17 @@ class JobRemoteDataSource implements JobDataSource {
       final response = await dio.getUri(uri);
 
       if (response.statusCode == 200) {
-        // Return the response data
         return response.data;
       } else {
-        // Handle error
-        throw Exception('Failed to load job details');
+        throw ServerFailure('Failed to load job details');
       }
+    } on DioException catch (e) {
+      // Throw a default failure if error is null
+      throw e.error ??
+          UnknownFailure('Unknown error occurred while fetching job details');
     } catch (e) {
-      // Handle exceptions
-      throw Exception('Failed to load job details: $e');
+      throw UnknownFailure(
+          'Unexpected error occurred while fetching job details');
     }
-  }
-
-  Future<Map<String, dynamic>> getCachedResponse() async {
-    final jsonString =
-        await rootBundle.loadString('assets/fake_response/search_jobs.json');
-
-    // Parse the JSON string into a Map
-    final cachedResponse = jsonDecode(jsonString) as Map<String, dynamic>;
-
-    // Wait for 3 seconds before returning the cached response
-    await Future.delayed(Duration(seconds: 3));
-
-    return cachedResponse;
   }
 }
