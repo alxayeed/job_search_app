@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:job_search_app/features/job_search/presentation/blocs/blocs.dart';
-import '../../../../core/error/job_failure.dart';
+import '../../../../core/error/failure.dart';
 import '../../domain/entities/job_entity.dart';
 import '../../domain/usecases/usecases.dart';
 
@@ -28,7 +28,7 @@ class JobSearchBloc extends Bloc<JobSearchEvent, JobSearchState> {
       SearchJobsEvent event, Emitter<JobSearchState> emit) async {
     emit(JobSearchLoading());
 
-    final Either<JobFailure, List<JobEntity>> result = await searchJobs(
+    final Either<Failure, List<JobEntity>> result = await searchJobs(
       query: event.query,
       remoteJobsOnly: event.remoteJobsOnly,
       employmentType: event.employmentType,
@@ -45,7 +45,7 @@ class JobSearchBloc extends Bloc<JobSearchEvent, JobSearchState> {
       JobDetailsRequested event, Emitter<JobSearchState> emit) async {
     emit(JobDetailsLoading());
 
-    final Either<JobFailure, JobEntity> result =
+    final Either<Failure, JobEntity> result =
         await getJobDetailsUseCase(event.jobId);
 
     result.fold(
@@ -56,7 +56,7 @@ class JobSearchBloc extends Bloc<JobSearchEvent, JobSearchState> {
 
   Future<void> _onBookmarkJob(
       BookmarkJobEvent event, Emitter<JobSearchState> emit) async {
-    final Either<JobFailure, JobEntity> result =
+    final Either<Failure, JobEntity> result =
         await toggleBookmarkUseCase(event.job);
 
     result.fold(
@@ -77,11 +77,12 @@ class JobSearchBloc extends Bloc<JobSearchEvent, JobSearchState> {
   void _onGetAllBookmarkedJobs(
       GetBookmarkedJobsEvent event, Emitter<JobSearchState> emit) async {
     emit(BookmarkedJobsLoading());
-    final Either<JobFailure, List<JobEntity>> result = await getBookmarkedJobs();
+    final Either<Failure, List<JobEntity>> result = await getBookmarkedJobs();
 
     result.fold(
-            (failure) => BookmarkedJobsErrorState(message: "Error getting bookmarked jobs"),
-            (bookmarkedJobs) => emit(BookmarkedJobsLoaded(bookmarkedJobs)),
+      (failure) =>
+          BookmarkedJobsErrorState(message: "Error getting bookmarked jobs"),
+      (bookmarkedJobs) => emit(BookmarkedJobsLoaded(bookmarkedJobs)),
     );
   }
 }

@@ -1,16 +1,16 @@
 import 'package:dio/dio.dart';
-import 'job_failure.dart';
+import 'failure.dart';
 
 class ErrorInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    JobFailure failure;
+    Failure failure;
 
     String apiMessage = err.response?.data['message'] ?? 'An error occurred';
 
     switch (err.type) {
       case DioExceptionType.connectionTimeout:
-        failure = ConnectionFailure('Connection timed out: $apiMessage');
+        failure = TimeoutFailure('Connection timed out: $apiMessage');
         break;
       case DioExceptionType.sendTimeout:
         failure = TimeoutFailure('Request send timed out: $apiMessage');

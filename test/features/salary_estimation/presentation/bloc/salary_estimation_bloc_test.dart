@@ -1,11 +1,11 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:job_search_app/core/error/failure.dart';
 import 'package:job_search_app/features/salary_estimation/domain/usecases/get_salary_estimation_use_case.dart';
 import 'package:job_search_app/features/salary_estimation/presentation/bloc/bloc.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'package:job_search_app/core/error/job_failure.dart';
 import 'package:job_search_app/features/salary_estimation/domain/entities/salary_estimation_entity.dart';
 import 'package:job_search_app/features/salary_estimation/presentation/bloc/salary_estimation_bloc.dart';
 

@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:job_search_app/core/error/failure.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:dartz/dartz.dart';
-import 'package:job_search_app/core/error/job_failure.dart';
 import 'package:job_search_app/features/salary_estimation/data/repositories/salary_estimation_repository_impl.dart';
 import 'package:job_search_app/features/salary_estimation/domain/entities/salary_estimation_entity.dart';
 import 'package:job_search_app/features/salary_estimation/data/datasources/datasources.dart';
@@ -55,7 +55,7 @@ void main() {
       );
 
       // Assert
-      expect(result, isA<Right<JobFailure, List<SalaryEstimationEntity>>>());
+      expect(result, isA<Right<Failure, List<SalaryEstimationEntity>>>());
       verify(mockDatasource.getSalaryEstimation(
           jobTitle: tJobTitle, location: tLocation, radius: tRadius));
       verifyNoMoreInteractions(mockDatasource);
@@ -76,7 +76,7 @@ void main() {
       );
 
       // Assert
-      expect(result, isA<Left<JobFailure, List<SalaryEstimationEntity>>>());
+      expect(result, isA<Left<Failure, List<SalaryEstimationEntity>>>());
       expect(result.fold((l) => l, (r) => null), isA<ServerFailure>());
       verify(mockDatasource.getSalaryEstimation(
           jobTitle: tJobTitle, location: tLocation, radius: tRadius));
@@ -109,7 +109,7 @@ void main() {
 
       // Assert
       expect(result.isLeft(), true);
-      expect(result, isA<Left<JobFailure, List<SalaryEstimationEntity>>>());
+      expect(result, isA<Left<Failure, List<SalaryEstimationEntity>>>());
       verify(mockDatasource.getSalaryEstimation(
           jobTitle: tJobTitle, location: tLocation, radius: tRadius));
     });
@@ -128,7 +128,7 @@ void main() {
       );
 
       // Assert
-      expect(result, isA<Left<JobFailure, List<SalaryEstimationEntity>>>());
+      expect(result, isA<Left<Failure, List<SalaryEstimationEntity>>>());
       expect(result.fold((l) => l, (r) => null), isA<InputFailure>());
     });
 
@@ -158,7 +158,7 @@ void main() {
 
       // Assert
       expect(result.isLeft(), true);
-      expect(result, isA<Left<JobFailure, List<SalaryEstimationEntity>>>());
+      expect(result, isA<Left<Failure, List<SalaryEstimationEntity>>>());
       expect(result.fold((l) => l, (r) => null), isA<InputFailure>());
       verify(mockDatasource.getSalaryEstimation(
           jobTitle: tJobTitle, location: tLocation, radius: tRadius));
@@ -179,7 +179,7 @@ void main() {
 
       // Assert
       expect(result.isLeft(), true);
-      expect(result, isA<Left<JobFailure, List<SalaryEstimationEntity>>>());
+      expect(result, isA<Left<Failure, List<SalaryEstimationEntity>>>());
       expect(result.fold((l) => l, (r) => null), isA<ServerFailure>());
       verify(mockDatasource.getSalaryEstimation(
           jobTitle: tJobTitle, location: tLocation, radius: tRadius));

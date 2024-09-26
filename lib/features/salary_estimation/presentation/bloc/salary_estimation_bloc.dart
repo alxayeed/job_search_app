@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import '../../../../core/error/job_failure.dart';
+import '../../../../core/error/failure.dart';
 import '../../domain/entities/entities.dart';
 import '../../domain/usecases/usecases.dart';
 
@@ -18,7 +18,7 @@ class SalaryEstimationBloc
     on<GetSalaryEstimationsEvent>((event, emit) async {
       emit(SalaryEstimationLoading());
 
-      final Either<JobFailure, List<SalaryEstimationEntity>> result =
+      final Either<Failure, List<SalaryEstimationEntity>> result =
           await getSalaryEstimationUseCase(
         jobTitle: event.jobTitle,
         location: event.location,
@@ -45,7 +45,7 @@ class SalaryEstimationBloc
   }
 
   // Map JobFailure to user-friendly messages
-  String _mapFailureToMessage(JobFailure failure) {
+  String _mapFailureToMessage(Failure failure) {
     switch (failure.runtimeType) {
       case NetworkFailure:
         return 'Network failure. Please check your connection.';

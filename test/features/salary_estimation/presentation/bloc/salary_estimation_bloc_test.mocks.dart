@@ -6,7 +6,7 @@
 import 'dart:async' as _i5;
 
 import 'package:dartz/dartz.dart' as _i3;
-import 'package:job_search_app/core/error/job_failure.dart' as _i6;
+import 'package:job_search_app/core/error/failure.dart' as _i6;
 import 'package:job_search_app/features/salary_estimation/domain/entities/entities.dart'
     as _i7;
 import 'package:job_search_app/features/salary_estimation/domain/repositories/repositories.dart'
@@ -69,37 +69,36 @@ class MockGetSalaryEstimationUseCase extends _i1.Mock
       ) as _i2.SalaryEstimationRepository);
 
   @override
-  _i5.Future<_i3.Either<_i6.JobFailure, List<_i7.SalaryEstimationEntity>>>
-      call({
+  _i5.Future<_i3.Either<_i6.Failure, List<_i7.SalaryEstimationEntity>>> call({
     required String? jobTitle,
     required String? location,
     String? radius = r'100',
   }) =>
-          (super.noSuchMethod(
-            Invocation.method(
-              #call,
-              [],
-              {
-                #jobTitle: jobTitle,
-                #location: location,
-                #radius: radius,
-              },
-            ),
-            returnValue: _i5.Future<
-                    _i3.Either<_i6.JobFailure,
-                        List<_i7.SalaryEstimationEntity>>>.value(
-                _FakeEither_1<_i6.JobFailure, List<_i7.SalaryEstimationEntity>>(
-              this,
-              Invocation.method(
-                #call,
-                [],
-                {
-                  #jobTitle: jobTitle,
-                  #location: location,
-                  #radius: radius,
-                },
-              ),
-            )),
-          ) as _i5.Future<
-              _i3.Either<_i6.JobFailure, List<_i7.SalaryEstimationEntity>>>);
+      (super.noSuchMethod(
+        Invocation.method(
+          #call,
+          [],
+          {
+            #jobTitle: jobTitle,
+            #location: location,
+            #radius: radius,
+          },
+        ),
+        returnValue: _i5.Future<
+                _i3
+                .Either<_i6.Failure, List<_i7.SalaryEstimationEntity>>>.value(
+            _FakeEither_1<_i6.Failure, List<_i7.SalaryEstimationEntity>>(
+          this,
+          Invocation.method(
+            #call,
+            [],
+            {
+              #jobTitle: jobTitle,
+              #location: location,
+              #radius: radius,
+            },
+          ),
+        )),
+      ) as _i5
+          .Future<_i3.Either<_i6.Failure, List<_i7.SalaryEstimationEntity>>>);
 }

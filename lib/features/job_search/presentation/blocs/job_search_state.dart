@@ -1,7 +1,7 @@
 // State Definitions
 import 'package:equatable/equatable.dart';
 
-import '../../../../core/error/job_failure.dart';
+import '../../../../core/error/failure.dart';
 import '../../domain/entities/job_entity.dart';
 
 abstract class JobSearchState extends Equatable {
@@ -23,7 +23,7 @@ class JobSearchLoaded extends JobSearchState {
 }
 
 class JobSearchError extends JobSearchState {
-  final JobFailure failure;
+  final Failure failure;
 
   JobSearchError(this.failure);
 
@@ -43,7 +43,7 @@ class JobDetailsLoaded extends JobSearchState {
 }
 
 class JobDetailsError extends JobSearchState {
-  final JobFailure failure;
+  final Failure failure;
 
   JobDetailsError(this.failure);
 

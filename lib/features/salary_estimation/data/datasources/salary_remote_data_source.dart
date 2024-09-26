@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:job_search_app/core/config/api_config.dart';
-import 'package:job_search_app/core/error/job_failure.dart';
 import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/error/failure.dart';
 import '../../../../core/services/get_storage_service.dart';
 
 abstract class SalaryEstimationDatasource {
