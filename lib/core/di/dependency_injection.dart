@@ -24,12 +24,13 @@ Future<void> init() async {
 
   // Initialize remote data source
   sl.registerLazySingleton<JobRemoteDataSource>(
-      () => JobRemoteDataSource(sl<DioService>().createDio()));
+      () => JobRemoteDataSourceImpl(sl<DioService>().createDio()));
   sl.registerLazySingleton<SalaryEstimationRemoteDatasource>(
       () => SalaryEstimationRemoteDatasource(sl<DioService>().createDio()));
 
   // Initialize local data source
-  sl.registerLazySingleton<JobLocalDataSource>(() => JobLocalDataSource.new());
+  sl.registerLazySingleton<JobLocalDataSource>(
+      () => JobLocalDataSourceImpl.new());
 
   // Initialize repository
   sl.registerLazySingleton<JobRepository>(
