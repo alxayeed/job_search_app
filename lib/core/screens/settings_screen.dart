@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/quota_info_widget.dart';
+import '../../core/services/app_info_service.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -35,6 +36,22 @@ class SettingsScreen extends StatelessWidget {
             leading: const Icon(Icons.info),
             title: const Text('About'),
             onTap: () {},
+          ),
+          const SizedBox(height: 16),
+          FutureBuilder<AppVersion>(
+            future: AppInfoService().getVersion(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const ListTile(
+                  leading: Icon(Icons.app_settings_alt),
+                  title: Text('App Version: Not Available'),
+                );
+              }
+              return ListTile(
+                leading: const Icon(Icons.app_settings_alt),
+                title: Text('App Version: ${snapshot.data.toString()}'),
+              );
+            },
           ),
         ],
       ),

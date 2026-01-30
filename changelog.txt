@@ -1,3 +1,7 @@
+1.0.0+3
+- Api key changing functionality
+- Api Quota info
+
 1.0.0+2
 - Job search will show real search result instead of cached data
 - If any error occurred, then cached data will ber shown
