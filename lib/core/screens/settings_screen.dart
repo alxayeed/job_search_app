@@ -17,7 +17,7 @@ class SettingsScreen extends StatelessWidget {
             title: const Text('API Usage'),
             leading: const Icon(Icons.storage),
             children: const [
-              QuotaInfoWidget(),
+              ApiQuotaWidget(),
             ],
           ),
           const SizedBox(height: 16),

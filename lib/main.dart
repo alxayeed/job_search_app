@@ -12,18 +12,21 @@ import 'core/firebase/firebase_options.dart';
 import 'features/job_search/presentation/screens/job_search_screen.dart';
 
 void main() async {
-  await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
-  await di.init();
+  await dotenv.load(fileName: ".env");
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  await di.init();
   final storageService = GetStorageService();
   await storageService.init();
 
   // Bloc.observer = AppBlocObserver();
   runApp(MyJobApp());
 }
+
 
 class MyJobApp extends StatelessWidget {
   @override

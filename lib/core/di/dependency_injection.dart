@@ -17,17 +17,17 @@ final sl = GetIt.instance;
 
 Future<void> init() async {
   // Initialize Dio service
-  sl.registerLazySingleton<DioService>(() => DioService());
+  sl.registerLazySingleton<DioClient>(() => DioClient());
 
   // Initialize StorageService
   sl.registerSingleton<GetStorageService>(GetStorageService());
 
 // Initialize remote data sources using the singleton Dio instance
   sl.registerLazySingleton<JobRemoteDataSource>(
-      () => JobRemoteDataSourceImpl(sl<DioService>().dio));
+      () => JobRemoteDataSourceImpl(sl<DioClient>().dio));
 
   sl.registerLazySingleton<SalaryEstimationRemoteDatasource>(
-      () => SalaryEstimationRemoteDatasource(sl<DioService>().dio));
+      () => SalaryEstimationRemoteDatasource(sl<DioClient>().dio));
 
   // Initialize local data source
   sl.registerLazySingleton<JobLocalDataSource>(

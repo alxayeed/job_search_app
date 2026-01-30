@@ -1,30 +1,34 @@
 import 'package:dio/dio.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
+import '../../features/job_search/presentation/screens/job_details_screen.dart';
 import '../config/api_config.dart';
 import '../error/error_interceptor.dart';
 import '../services/get_storage_service.dart';
-import 'interceptors/quota_interceptor.dart';
+import 'interceptors/api_quota_interceptor.dart';
 
-class DioService {
-  DioService._();
+class DioClient {
+  DioClient._();
 
-  static final DioService _instance = DioService._();
+  static final DioClient _instance = DioClient._();
 
   Dio? _dio;
 
-  factory DioService() => _instance;
+  factory DioClient() => _instance;
 
   Dio get dio {
     _dio ??= Dio(BaseOptions(
       baseUrl: ApiConfig.baseUrl,
       connectTimeout: const Duration(milliseconds: 5000),
       receiveTimeout: const Duration(milliseconds: 30000),
-      headers: {
-        'X-RapidAPI-Key': ApiConfig.apiKey,
-      },
     ));
 
     _dio!.interceptors.addAll([
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          options.headers['X-RapidAPI-Key'] = ApiConfig.currentKey;
+          handler.next(options);
+        },
+      ),
       LogInterceptor(
         request: true,
         requestBody: true,
@@ -47,7 +51,7 @@ class DioService {
         },
       ),
       ErrorInterceptor(),
-      QuotaInterceptor(storageService: GetStorageService()),
+      ApiQuotaInterceptor(storageService: sl<GetStorageService>()),
     ]);
 
     return _dio!;
