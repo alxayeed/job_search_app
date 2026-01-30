@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:job_search_app/core/services/app_info_service.dart';
 import 'package:job_search_app/features/job_search/presentation/screens/job_search_screen.dart';
 import 'package:job_search_app/features/job_search/presentation/screens/bookmarked_jobs_screen.dart';
-
 import '../../../salary_estimation/presentation/pages/salary_estimation_screen.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -10,64 +10,84 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
+      child: Column(
         children: [
-          DrawerHeader(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.blueAccent, Colors.lightBlue],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                DrawerHeader(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.blueAccent, Colors.lightBlue],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: const Text(
+                    'Job Search',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                    ),
+                  ),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.search),
+                  title: const Text('Search Job'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => JobSearchScreen(),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.monetization_on),
+                  title: const Text('Salary Estimation'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => SalaryEstimationScreen(),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.bookmark),
+                  title: const Text('Saved Jobs'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BookmarkedJobsScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
-            child: Text(
-              'Hi!',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-              ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: FutureBuilder<AppVersion>(
+              future: AppInfoService().getVersion(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const SizedBox.shrink();
+                }
+                return Text(
+                  snapshot.data.toString(),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall
+                      ?.copyWith(color: Colors.grey),
+                );
+              },
             ),
-          ),
-          ListTile(
-            leading: Icon(Icons.search),
-            title: Text('Search Job'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) {
-                  return JobSearchScreen();
-                }),
-              );
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.monetization_on),
-            title: Text('Salary Estimation'),
-            onTap: () {
-              // Navigator.pop(context);
-              // Navigator.pushNamed(context, '/salary-estimation');
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) {
-                  return SalaryEstimationScreen();
-                }),
-              );
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.bookmark),
-            title: Text('Saved Jobs'),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) {
-                  return BookmarkedJobsScreen();
-                }),
-              );
-              // Navigator.pushNamed(context, '/saved-jobs');
-            },
           ),
         ],
       ),

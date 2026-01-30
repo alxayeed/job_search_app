@@ -1,7 +1,7 @@
 name: job_search_app
 description: "A job searching app using Flutter"
 publish_to: 'none'
-version: 0.1.0
+version: 1.0.0+2
 
 environment:
   sdk: '>=3.3.4 <4.0.0'
@@ -27,6 +27,7 @@ dependencies:
   share_plus: ^10.0.0
   path_provider: ^2.1.4
   get_storage: ^2.1.1
+  package_info_plus: ^9.0.0
 #  isar: ^3.1.0+1
 #  isar_flutter_libs: ^3.1.0+1
 

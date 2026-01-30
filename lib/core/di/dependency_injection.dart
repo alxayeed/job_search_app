@@ -67,4 +67,6 @@ Future<void> init() async {
   sl.registerFactory(() => SalaryEstimationBloc(
         getSalaryEstimationUseCase: sl<GetSalaryEstimationUseCase>(),
       ));
+
+  sl.registerLazySingleton<AppInfoService>(() => AppInfoService());
 }

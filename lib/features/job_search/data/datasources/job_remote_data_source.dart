@@ -43,27 +43,24 @@ class JobRemoteDataSourceImpl implements JobRemoteDataSource {
     var cachedResponse = box.read("job_results");
 
     try {
-      if (cachedResponse == null) {
-        final response = await dio.getUri(uri);
-        if (response.statusCode == 200) {
-          box.write("job_results", response.data);
-          return response.data;
-        } else {
-          throw ServerFailure('Failed to load jobs');
-        }
+      final response = await dio.getUri(uri);
+      if (response.statusCode == 200) {
+        box.write("job_results", response.data);
+        return response.data;
       } else {
-        await Future.delayed(const Duration(seconds: 3));
-        return cachedResponse;
+        throw ServerFailure('Failed to load jobs');
       }
     } on DioException catch (e) {
-      // Throw a default failure if error is null
       if (e.error is Failure) {
-        throw e; // Rethrow the custom failure from interceptor
+        throw e;
       } else {
-        throw UnknownFailure('Unexpected error occurred while fetching job details');
+        throw UnknownFailure(
+            'Unexpected error occurred while fetching job details');
       }
     } catch (e) {
       throw UnknownFailure('Unexpected error occurred while fetching jobs');
+    } finally {
+      return cachedResponse;
     }
   }
 
@@ -84,7 +81,6 @@ class JobRemoteDataSourceImpl implements JobRemoteDataSource {
         throw ServerFailure('Failed to load job details');
       }
     } on DioException catch (e) {
-      // Throw a default failure if error is null
       print(e);
       throw e.error ??
           UnknownFailure('Unknown error occurred while fetching job details');
