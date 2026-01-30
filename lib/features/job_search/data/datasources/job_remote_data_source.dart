@@ -57,8 +57,11 @@ class JobRemoteDataSourceImpl implements JobRemoteDataSource {
       }
     } on DioException catch (e) {
       // Throw a default failure if error is null
-      throw e.error ??
-          UnknownFailure('Unknown error occurred while fetching jobs');
+      if (e.error is Failure) {
+        throw e; // Rethrow the custom failure from interceptor
+      } else {
+        throw UnknownFailure('Unexpected error occurred while fetching job details');
+      }
     } catch (e) {
       throw UnknownFailure('Unexpected error occurred while fetching jobs');
     }
@@ -82,6 +85,7 @@ class JobRemoteDataSourceImpl implements JobRemoteDataSource {
       }
     } on DioException catch (e) {
       // Throw a default failure if error is null
+      print(e);
       throw e.error ??
           UnknownFailure('Unknown error occurred while fetching job details');
     } catch (e) {

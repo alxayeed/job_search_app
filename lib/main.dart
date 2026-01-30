@@ -32,7 +32,7 @@ class MyJobApp extends StatelessWidget {
       create: (_) => GetIt.instance<JobSearchBloc>(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: JobSearchScreen(), // Initial screen
+        home: JobSearchScreen(),
       ),
     );
   }
