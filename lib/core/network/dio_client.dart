@@ -2,18 +2,16 @@ import 'package:dio/dio.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import '../config/api_config.dart';
 import '../error/error_interceptor.dart';
+import '../services/get_storage_service.dart';
+import 'interceptors/quota_interceptor.dart';
 
 class DioService {
-  // Private constructor
   DioService._();
 
-  // Singleton instance
   static final DioService _instance = DioService._();
 
-  // Private Dio instance
   Dio? _dio;
 
-  // Factory constructor to return the singleton instance
   factory DioService() => _instance;
 
   Dio get dio {
@@ -44,14 +42,12 @@ class DioService {
           Duration(seconds: 3),
         ],
         retryEvaluator: (error, attempt) {
-          // Retry only if it's a server error (5xx) or a timeout
-          int statusCode =
-              error.response?.statusCode ?? 0; // Default to 0 if null
-          return error.type != DioExceptionType.badResponse ||
-              statusCode >= 500;
+          int statusCode = error.response?.statusCode ?? 0;
+          return error.type != DioExceptionType.badResponse || statusCode >= 500;
         },
       ),
       ErrorInterceptor(),
+      QuotaInterceptor(storageService: GetStorageService()),
     ]);
 
     return _dio!;

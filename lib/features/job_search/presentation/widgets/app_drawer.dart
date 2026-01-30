@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:job_search_app/core/services/app_info_service.dart';
 import 'package:job_search_app/features/job_search/presentation/screens/job_search_screen.dart';
 import 'package:job_search_app/features/job_search/presentation/screens/bookmarked_jobs_screen.dart';
+import '../../../../core/screens/settings_screen.dart';
 import '../../../salary_estimation/presentation/pages/salary_estimation_screen.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -64,6 +65,18 @@ class AppDrawer extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (_) => BookmarkedJobsScreen(),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.settings),
+                  title: const Text('Settings'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const SettingsScreen(),
                       ),
                     );
                   },
