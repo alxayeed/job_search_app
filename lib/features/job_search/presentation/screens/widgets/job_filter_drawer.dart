@@ -1,28 +1,47 @@
 import 'package:flutter/material.dart';
+import '../../../domain/entities/job_filter_entity.dart';
+import '../../../domain/enums/date_posted.dart';
+import '../../../domain/enums/employment_type.dart';
+import '../../../domain/enums/job_country.dart';
+import '../../../domain/enums/job_experience.dart';
 
 class JobFilterDrawer extends StatefulWidget {
+  final JobFilterEntity currentFilters;
+  final ValueChanged<JobFilterEntity> onChange;
   final VoidCallback? onApply;
   final VoidCallback? onReset;
 
-  const JobFilterDrawer({Key? key, this.onApply, this.onReset}) : super(key: key);
+  const JobFilterDrawer({
+    Key? key,
+    required this.currentFilters,
+    required this.onChange,
+    this.onApply,
+    this.onReset,
+  }) : super(key: key);
 
   @override
   State<JobFilterDrawer> createState() => _JobFilterDrawerState();
 }
 
 class _JobFilterDrawerState extends State<JobFilterDrawer> {
-  String selectedCountry = 'us';
-  String datePosted = 'today';
-  String employmentType = 'Full-time';
-  String experienceLevel = 'Mid';
-  bool remoteOnly = true;
-  double radius = 25;
+  late JobFilterEntity _filters;
 
-  final Color primaryColor = Color(0xFF0066FF);
-  final Color chipUnselectedBg = Color(0xFFF0F5FF);
-  final Color chipUnselectedText = Color(0xFF4A5568);
-  final Color borderLight = Color(0xFFE2E8F0);
-  final Color surfaceLight = Colors.white;
+  static const Color primaryColor = Color(0xFF0066FF);
+  static const Color chipUnselectedBg = Color(0xFFF0F5FF);
+  static const Color chipUnselectedText = Color(0xFF4A5568);
+  static const Color borderLight = Color(0xFFE2E8F0);
+  static const Color surfaceLight = Colors.white;
+
+  @override
+  void initState() {
+    super.initState();
+    _filters = widget.currentFilters;
+  }
+
+  void _updateFilters(JobFilterEntity newFilters) {
+    setState(() => _filters = newFilters);
+    widget.onChange(newFilters);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +50,7 @@ class _JobFilterDrawerState extends State<JobFilterDrawer> {
         children: [
           GestureDetector(
             onTap: () => Navigator.of(context).pop(),
-            child: Container(
-              color: Colors.black.withOpacity(0.2),
-            ),
+            child: Container(color: Colors.black.withOpacity(0.2)),
           ),
           Align(
             alignment: Alignment.centerRight,
@@ -45,16 +62,17 @@ class _JobFilterDrawerState extends State<JobFilterDrawer> {
                 children: [
                   Column(
                     children: [
+                      // Header
                       Container(
                         padding: const EdgeInsets.only(top: 0, bottom: 16, left: 16),
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: surfaceLight,
                           border: Border(bottom: BorderSide(color: borderLight)),
                         ),
                         child: Row(
                           children: [
                             IconButton(
-                              icon: Icon(Icons.close, size: 28, color: Colors.black87),
+                              icon: const Icon(Icons.close, size: 28, color: Colors.black87),
                               onPressed: () => Navigator.of(context).pop(),
                             ),
                             const SizedBox(width: 8),
@@ -74,170 +92,109 @@ class _JobFilterDrawerState extends State<JobFilterDrawer> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const SizedBox(height: 8),
+                              // Country
                               const Text(
                                 "Country",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                    color: Colors.black87),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87),
                               ),
                               const SizedBox(height: 8),
                               Container(
                                 height: 52,
                                 padding: const EdgeInsets.symmetric(horizontal: 12),
                                 decoration: BoxDecoration(
-                                  color: Color(0xFFF8FAFC),
+                                  color: const Color(0xFFF8FAFC),
                                   borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(color: borderLight),
+                                  border: const Border.fromBorderSide(BorderSide(color: borderLight)),
                                 ),
                                 child: DropdownButtonHideUnderline(
-                                  child: DropdownButton<String>(
-                                    value: selectedCountry,
+                                  child: DropdownButton<JobCountry>(
+                                    value: _filters.jobCountry,
                                     isExpanded: true,
                                     icon: const Icon(Icons.expand_more, color: Colors.grey),
-                                    items: const [
-                                      DropdownMenuItem(value: 'us', child: Text('United States')),
-                                      DropdownMenuItem(value: 'uk', child: Text('United Kingdom')),
-                                      DropdownMenuItem(value: 'ca', child: Text('Canada')),
-                                      DropdownMenuItem(value: 'de', child: Text('Germany')),
-                                    ],
+                                    items: JobCountry.values.map((c) => DropdownMenuItem(
+                                      value: c,
+                                      child: Text(c.label),
+                                    )).toList(),
                                     onChanged: (value) {
-                                      setState(() {
-                                        selectedCountry = value!;
-                                      });
+                                      if (value != null) {
+                                        _updateFilters(_filters.copyWith(jobCountry: value));
+                                      }
                                     },
                                   ),
                                 ),
                               ),
-                              const Divider(height: 32),
-                              const Text(
-                                "Date Posted",
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87),
-                              ),
-                              const SizedBox(height: 12),
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: [
-                                    _buildChip("Any", "datePosted", "any"),
-                                    const SizedBox(width: 8),
-                                    _buildChip("Today", "datePosted", "today"),
-                                    const SizedBox(width: 8),
-                                    _buildChip("3 Days", "datePosted", "3days"),
-                                    const SizedBox(width: 8),
-                                    _buildChip("Week", "datePosted", "week"),
-                                    const SizedBox(width: 8),
-                                    _buildChip("Month", "datePosted", "month"),
-                                  ],
-                                ),
+                              const SizedBox(height: 24),
+
+                              // Chips sections
+                              _buildChipsSection<DatePosted>(
+                                label: "Date Posted",
+                                values: DatePosted.values,
+                                selected: _filters.datePosted!,
+                                onSelected: (val) => _updateFilters(_filters.copyWith(datePosted: val)),
                               ),
                               const SizedBox(height: 24),
-                              const Text(
-                                "Employment Type",
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87),
-                              ),
-                              const SizedBox(height: 12),
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: [
-                                    _buildChip("Full-time", "employmentType", "Full-time"),
-                                    const SizedBox(width: 8),
-                                    _buildChip("Part-time", "employmentType", "Part-time"),
-                                    const SizedBox(width: 8),
-                                    _buildChip("Contract", "employmentType", "Contract"),
-                                    const SizedBox(width: 8),
-                                    _buildChip("Intern", "employmentType", "Intern"),
-                                  ],
-                                ),
+                              _buildChipsSection<EmploymentType>(
+                                label: "Employment Type",
+                                values: EmploymentType.values,
+                                selected: _filters.employmentType!,
+                                onSelected: (val) => _updateFilters(_filters.copyWith(employmentType: val)),
                               ),
                               const SizedBox(height: 24),
-                              const Text(
-                                "Experience Level",
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87),
-                              ),
-                              const SizedBox(height: 12),
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: [
-                                    _buildChip("Entry", "experienceLevel", "Entry"),
-                                    const SizedBox(width: 8),
-                                    _buildChip("Mid", "experienceLevel", "Mid"),
-                                    const SizedBox(width: 8),
-                                    _buildChip("Senior", "experienceLevel", "Senior"),
-                                  ],
-                                ),
+                              _buildChipsSection<JobExperience>(
+                                label: "Experience Level",
+                                values: JobExperience.values,
+                                selected: _filters.jobExperience!,
+                                onSelected: (val) => _updateFilters(_filters.copyWith(jobExperience: val)),
                               ),
                               const SizedBox(height: 24),
 
+                              // Remote Switch
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: const [
-                                      Text("Remote Jobs Only", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87)),
-                                    ],
+                                  const Text(
+                                    "Remote Jobs Only",
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87),
                                   ),
                                   Switch.adaptive(
-                                    value: remoteOnly,
+                                    value: _filters.remoteJobsOnly,
                                     activeColor: primaryColor,
                                     activeTrackColor: primaryColor.withOpacity(0.3),
-                                    onChanged: (val) {
-                                      setState(() {
-                                        remoteOnly = val;
-                                      });
-                                    },
-                                  )
+                                    onChanged: (val) => _updateFilters(_filters.copyWith(remoteJobsOnly: val)),
+                                  ),
                                 ],
                               ),
 
                               const SizedBox(height: 24),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+
+                              // Radius
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Text("Radius", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: primaryColor.withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                        child: Text("${radius.round()} miles",
-                                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: primaryColor)),
-                                      )
-                                    ],
+                                  const Text(
+                                    "Radius",
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                                   ),
-                                  SliderTheme(
-                                    data: SliderTheme.of(context).copyWith(
-                                      trackHeight: 6,
-                                      thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12),
-                                      thumbColor: surfaceLight,
-                                      overlayColor: primaryColor.withOpacity(0.2),
-                                      activeTrackColor: primaryColor,
-                                      inactiveTrackColor: borderLight,
-                                      valueIndicatorTextStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: primaryColor.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
-                                    child: Slider(
-                                      min: 0,
-                                      max: 100,
-                                      divisions: 100,
-                                      value: radius,
-                                      label: "${radius.round()} mi",
-                                      onChanged: (value) {
-                                        setState(() {
-                                          radius = value;
-                                        });
-                                      },
-                                    ),
-                                  )
+                                    child: Text("${_filters.radius.round()} miles",
+                                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: primaryColor)),
+                                  ),
                                 ],
                               ),
+                              Slider(
+                                min: 0,
+                                max: 100,
+                                divisions: 100,
+                                value: _filters.radius,
+                                label: "${_filters.radius.round()} mi",
+                                onChanged: (value) => _updateFilters(_filters.copyWith(radius: value)),
+                              ),
+
                               const SizedBox(height: 120),
                             ],
                           ),
@@ -245,6 +202,7 @@ class _JobFilterDrawerState extends State<JobFilterDrawer> {
                       ),
                     ],
                   ),
+                  // Bottom Buttons
                   Positioned(
                     bottom: 0,
                     left: 0,
@@ -253,7 +211,7 @@ class _JobFilterDrawerState extends State<JobFilterDrawer> {
                       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
                       decoration: BoxDecoration(
                         color: surfaceLight.withOpacity(0.95),
-                        border: Border(top: BorderSide(color: borderLight)),
+                        border: const Border(top: BorderSide(color: borderLight)),
                       ),
                       child: Row(
                         children: [
@@ -261,11 +219,14 @@ class _JobFilterDrawerState extends State<JobFilterDrawer> {
                             child: OutlinedButton(
                               onPressed: widget.onReset,
                               style: OutlinedButton.styleFrom(
-                                side: BorderSide(color: borderLight),
+                                side: const BorderSide(color: borderLight),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                                 padding: const EdgeInsets.symmetric(vertical: 14),
                               ),
-                              child: const Text("Reset", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87)),
+                              child: const Text(
+                                "Reset",
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87),
+                              ),
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -278,7 +239,10 @@ class _JobFilterDrawerState extends State<JobFilterDrawer> {
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                                 padding: const EdgeInsets.symmetric(vertical: 14),
                               ),
-                              child: const Text("Apply Filters", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white)),
+                              child: const Text(
+                                "Apply Filters",
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white),
+                              ),
                             ),
                           ),
                         ],
@@ -294,51 +258,50 @@ class _JobFilterDrawerState extends State<JobFilterDrawer> {
     );
   }
 
-  Widget _buildChip(String label, String group, String value) {
-    final bool isSelected;
-    switch (group) {
-      case "datePosted":
-        isSelected = datePosted == value;
-        break;
-      case "employmentType":
-        isSelected = employmentType == value;
-        break;
-      case "experienceLevel":
-        isSelected = experienceLevel == value;
-        break;
-      default:
-        isSelected = false;
-    }
-
-    final Color bgColor = isSelected ? primaryColor : chipUnselectedBg;
-    final Color textColor = isSelected ? Colors.white : chipUnselectedText;
-
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          switch (group) {
-            case "datePosted":
-              datePosted = value;
-              break;
-            case "employmentType":
-              employmentType = value;
-              break;
-            case "experienceLevel":
-              experienceLevel = value;
-              break;
-          }
-        });
-      },
-      child: Container(
-        height: 38,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(50),
+  Widget _buildChipsSection<T>({
+    required String label,
+    required List<T> values,
+    required T selected,
+    required ValueChanged<T> onSelected,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87)),
+        const SizedBox(height: 12),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: values.map((val) {
+              final isSelected = val == selected;
+              final String text = (val as dynamic).label;
+              return Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: GestureDetector(
+                  onTap: () => onSelected(val),
+                  child: Container(
+                    height: 38,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: isSelected ? primaryColor : chipUnselectedBg,
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      text,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: isSelected ? Colors.white : chipUnselectedText,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
         ),
-        alignment: Alignment.center,
-        child: Text(label, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: textColor)),
-      ),
+      ],
     );
   }
 }

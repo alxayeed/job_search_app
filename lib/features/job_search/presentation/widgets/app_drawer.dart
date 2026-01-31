@@ -46,18 +46,18 @@ class AppDrawer extends StatelessWidget {
                     );
                   },
                 ),
-                // ListTile(
-                //   leading: const Icon(Icons.search),
-                //   title: const Text('Search Job(New)'),
-                //   onTap: () {
-                //     Navigator.push(
-                //       context,
-                //       MaterialPageRoute(
-                //         builder: (_) => JobSearchScreenNew(),
-                //       ),
-                //     );
-                //   },
-                // ),
+                ListTile(
+                  leading: const Icon(Icons.search),
+                  title: const Text('Search Job(New)'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => JobSearchScreenNew(),
+                      ),
+                    );
+                  },
+                ),
                 ListTile(
                   leading: const Icon(Icons.monetization_on),
                   title: const Text('Salary Estimation'),

@@ -7,6 +7,7 @@ import 'package:job_search_app/features/job_search/presentation/widgets/app_draw
 import 'package:job_search_app/features/job_search/presentation/widgets/job_card.dart';
 import 'package:lottie/lottie.dart';
 import '../../domain/entities/job_entity.dart';
+import '../../domain/entities/job_filter_entity.dart';
 import '../../domain/enums/date_posted.dart';
 import '../../domain/enums/employment_type.dart';
 import '../../domain/enums/job_country.dart';
@@ -40,19 +41,29 @@ class JobSearchBody extends StatefulWidget {
 class _JobSearchBodyState extends State<JobSearchBody> {
   final TextEditingController _queryController =
   TextEditingController(text: "Software Engineer");
-  bool _remoteJobsOnly = false;
-  EmploymentType? _employmentType = EmploymentType.fullTime;
-  DatePosted? _datePosted = DatePosted.all;
-  JobExperience? _jobExperience = JobExperience.under3Years;
-  JobCountry? _jobCountry = JobCountry.bangladesh;
+
+  JobFilterEntity _currentFilters = JobFilterEntity(
+    employmentType: EmploymentType.fullTime,
+    datePosted: DatePosted.all,
+    jobExperience: JobExperience.under3Years,
+    jobCountry: JobCountry.bangladesh,
+    remoteJobsOnly: false,
+    radius: 25.0,
+  );
 
   bool _filtersExpanded = true;
+
+  void _onFilterChanged(JobFilterEntity newFilters) {
+    setState(() {
+      _currentFilters = newFilters;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _buildFloatingFilters(),
+        _buildSearchWithFilters(),
         Expanded(
           child: BlocBuilder<JobSearchBloc, JobSearchState>(
             builder: (context, state) {
@@ -89,7 +100,7 @@ class _JobSearchBodyState extends State<JobSearchBody> {
     );
   }
 
-  Widget _buildFloatingFilters() {
+  Widget _buildSearchWithFilters() {
     return Container(
       padding: EdgeInsets.fromLTRB(16, 16, 16, 16),
       margin: EdgeInsets.only(top: 10),
@@ -102,32 +113,34 @@ class _JobSearchBodyState extends State<JobSearchBody> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Search Box with Filter Icon
               Row(
                 children: [
                   Expanded(
                     child: TextField(
                       controller: _queryController,
-                      onTapOutside: (event) {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                      },
+                      onTapOutside: (event) =>
+                          FocusManager.instance.primaryFocus?.unfocus(),
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.grey[100],
                         hintText: 'Search your next Job...',
-                        prefixIcon: Icon(Icons.search, color: Colors.blueAccent),
+                        prefixIcon:
+                        Icon(Icons.search, color: Colors.blueAccent),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
                           borderSide: BorderSide.none,
                         ),
-                        contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+                        contentPadding:
+                        EdgeInsets.symmetric(vertical: 0, horizontal: 20),
                       ),
                       onSubmitted: (_) => _searchJobs(),
                     ),
                   ),
                   IconButton(
                     icon: Icon(
-                      _filtersExpanded ? Icons.filter_alt_off : Icons.filter_alt,
+                      _filtersExpanded
+                          ? Icons.filter_alt_off
+                          : Icons.filter_alt,
                       color: Colors.blueAccent,
                     ),
                     onPressed: () {
@@ -140,38 +153,33 @@ class _JobSearchBodyState extends State<JobSearchBody> {
               ),
               SizedBox(height: 10),
 
-              // Filters Section (Expandable)
               if (_filtersExpanded) ...[
                 SwitchListTile(
                   title: Text('Remote Jobs Only',
                       style: TextStyle(color: Colors.blueAccent)),
-                  value: _remoteJobsOnly,
-                  onChanged: (bool selected) {
-                    setState(() {
-                      _remoteJobsOnly = selected;
-                    });
-                  },
+                  value: _currentFilters.remoteJobsOnly,
+                  onChanged: (selected) => _onFilterChanged(
+                      _currentFilters.copyWith(remoteJobsOnly: selected)),
                   activeThumbColor: Colors.blueAccent,
                   contentPadding: EdgeInsets.zero,
                 ),
                 SizedBox(height: 10),
                 DropdownButtonFormField<EmploymentType>(
-                  initialValue: _employmentType,
+                  value: _currentFilters.employmentType,
                   items: EmploymentType.values.map((type) {
                     return DropdownMenuItem(
                       value: type,
-                      child: Text(type.label, style: TextStyle(color: Colors.blueAccent)),
+                      child: Text(type.label,
+                          style: TextStyle(color: Colors.blueAccent)),
                     );
                   }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _employmentType = value;
-                    });
-                  },
+                  onChanged: (value) => _onFilterChanged(
+                      _currentFilters.copyWith(employmentType: value)),
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.grey[100],
-                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    contentPadding:
+                    EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                       borderSide: BorderSide.none,
@@ -180,22 +188,21 @@ class _JobSearchBodyState extends State<JobSearchBody> {
                 ),
                 SizedBox(height: 10),
                 DropdownButtonFormField<DatePosted>(
-                  initialValue: _datePosted,
+                  value: _currentFilters.datePosted,
                   items: DatePosted.values.map((date) {
                     return DropdownMenuItem(
                       value: date,
-                      child: Text(date.label, style: TextStyle(color: Colors.blueAccent)),
+                      child: Text(date.label,
+                          style: TextStyle(color: Colors.blueAccent)),
                     );
                   }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _datePosted = value;
-                    });
-                  },
+                  onChanged: (value) =>
+                      _onFilterChanged(_currentFilters.copyWith(datePosted: value)),
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.grey[100],
-                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    contentPadding:
+                    EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                       borderSide: BorderSide.none,
@@ -204,22 +211,21 @@ class _JobSearchBodyState extends State<JobSearchBody> {
                 ),
                 SizedBox(height: 10),
                 DropdownButtonFormField<JobExperience>(
-                  initialValue: _jobExperience,
+                  value: _currentFilters.jobExperience,
                   items: JobExperience.values.map((exp) {
                     return DropdownMenuItem(
                       value: exp,
-                      child: Text(exp.label, style: TextStyle(color: Colors.blueAccent)),
+                      child: Text(exp.label,
+                          style: TextStyle(color: Colors.blueAccent)),
                     );
                   }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _jobExperience = value;
-                    });
-                  },
+                  onChanged: (value) => _onFilterChanged(
+                      _currentFilters.copyWith(jobExperience: value)),
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.grey[100],
-                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    contentPadding:
+                    EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                       borderSide: BorderSide.none,
@@ -228,22 +234,21 @@ class _JobSearchBodyState extends State<JobSearchBody> {
                 ),
                 SizedBox(height: 10),
                 DropdownButtonFormField<JobCountry>(
-                  initialValue: _jobCountry,
+                  value: _currentFilters.jobCountry,
                   items: JobCountry.values.map((country) {
                     return DropdownMenuItem(
                       value: country,
-                      child: Text(country.label, style: TextStyle(color: Colors.blueAccent)),
+                      child: Text(country.label,
+                          style: TextStyle(color: Colors.blueAccent)),
                     );
                   }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _jobCountry = value;
-                    });
-                  },
+                  onChanged: (value) =>
+                      _onFilterChanged(_currentFilters.copyWith(jobCountry: value)),
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.grey[100],
-                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    contentPadding:
+                    EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                       borderSide: BorderSide.none,
@@ -257,7 +262,8 @@ class _JobSearchBodyState extends State<JobSearchBody> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blueAccent,
                       foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                      padding:
+                      EdgeInsets.symmetric(vertical: 12, horizontal: 24),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0),
                       ),
@@ -265,10 +271,8 @@ class _JobSearchBodyState extends State<JobSearchBody> {
                     ),
                     child: Text(
                       'Search',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style:
+                      TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -306,11 +310,11 @@ class _JobSearchBodyState extends State<JobSearchBody> {
     BlocProvider.of<JobSearchBloc>(context).add(
       SearchJobsEvent(
         query: _queryController.text,
-        remoteJobsOnly: _remoteJobsOnly,
-        employmentType: _employmentType,
-        datePosted: _datePosted,
-        jobExperience: _jobExperience,
-        jobCountry: _jobCountry,
+        remoteJobsOnly: _currentFilters.remoteJobsOnly,
+        employmentType: _currentFilters.employmentType,
+        datePosted: _currentFilters.datePosted,
+        jobExperience: _currentFilters.jobExperience,
+        jobCountry: _currentFilters.jobCountry,
       ),
     );
   }
