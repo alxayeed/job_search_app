@@ -18,9 +18,6 @@ class JobCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // final jobSearchBloc = sl<JobSearchBloc>();
-        // jobSearchBloc.add(JobDetailsRequested(jobId: job.jobId));
-
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -29,15 +26,15 @@ class JobCard extends StatelessWidget {
         );
       },
       child: Container(
-        margin: EdgeInsets.only(bottom: 16.0),
-        padding: EdgeInsets.all(16.0),
+        margin: const EdgeInsets.only(bottom: 16.0),
+        padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(15.0),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
-              offset: Offset(0, 2),
+              offset: const Offset(0, 2),
               blurRadius: 6.0,
             ),
           ],
@@ -46,26 +43,24 @@ class JobCard extends StatelessWidget {
           children: [
             job.employerLogo != null
                 ? (job.employerLogo!.toLowerCase().endsWith('.svg')
-                    ? SvgPicture.network(
-                        job.employerLogo!,
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.cover,
-                        placeholderBuilder: (context) => Icon(Icons.work,
-                            size: 50, color: Colors.blueAccent),
-                      )
-                    : Image.network(
-                        job.employerLogo!,
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Icon(
-                            Icons.error,
-                            size: 50,
-                            color: Colors.redAccent),
-                      ))
-                : Icon(Icons.work, size: 50, color: Colors.blueAccent),
-            SizedBox(width: 16.0),
+                ? SvgPicture.network(
+              job.employerLogo!,
+              width: 50,
+              height: 50,
+              fit: BoxFit.cover,
+              placeholderBuilder: (context) =>
+              const Icon(Icons.work, size: 50, color: Colors.blueAccent),
+            )
+                : Image.network(
+              job.employerLogo!,
+              width: 50,
+              height: 50,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) =>
+              const Icon(Icons.error, size: 50, color: Colors.redAccent),
+            ))
+                : const Icon(Icons.work, size: 50, color: Colors.blueAccent),
+            const SizedBox(width: 16.0),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,30 +68,49 @@ class JobCard extends StatelessWidget {
                   Text(
                     job.jobTitle ?? 'No title',
                     maxLines: 1,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16.0,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4.0),
-                    child: Text(
-                      job.employerName ?? 'No employer',
-                      style: TextStyle(
-                        color: Colors.grey,
+                  const SizedBox(height: 4),
+                  Text(
+                    job.employerName ?? 'No employer',
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    job.jobCity != null && job.country != null
+                        ? "${job.jobCity}, ${job.country?.label ?? ''}"
+                        : job.country?.label ?? 'Unknown location',
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                  const SizedBox(height: 4),
+                  if (job.employmentType != null)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade50,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Text(
+                        job.employmentType?.label ?? '',
+                        style: const TextStyle(
+                          color: Colors.blueAccent,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
-                  ),
+                  const SizedBox(height: 4),
                   Text(
-                    "${job.jobPostedAtDatetimeUtc?.format() ?? 'No employer'}",
-                    style: TextStyle(
-                      color: Colors.grey,
-                    ),
+                    job.jobPostedAtUtc?.format() ?? 'Unknown date',
+                    style: const TextStyle(color: Colors.grey, fontSize: 12),
                   ),
                 ],
               ),
             ),
-            SizedBox(width: 16.0),
+            const SizedBox(width: 16.0),
             if (job.jobApplyLink != null && job.jobApplyLink!.isNotEmpty)
               GestureDetector(
                 onTap: () async {
@@ -109,12 +123,12 @@ class JobCard extends StatelessWidget {
                   }
                 },
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                   decoration: BoxDecoration(
                     color: Colors.green,
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  child: Text(
+                  child: const Text(
                     'Apply Now',
                     style: TextStyle(
                       color: Colors.white,

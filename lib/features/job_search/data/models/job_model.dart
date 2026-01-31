@@ -1,56 +1,63 @@
 import '../../domain/entities/job_entity.dart';
-import 'models.dart';
+import '../../domain/enums/employment_type.dart';
+import '../../domain/enums/job_country.dart';
+import '../../domain/enums/job_experience.dart';
+import '../../domain/enums/date_posted.dart';
+import 'apply_options_model.dart';
+import 'job_highlights_model.dart';
 
-class JobModel extends JobEntity {
-  JobModel({
-    required String jobId,
-    String? employerName,
-    String? employerLogo,
-    String? employerWebsite,
-    String? jobEmploymentType,
-    String? jobTitle,
-    String? jobApplyLink,
-    bool? jobApplyIsDirect,
-    List<ApplyOptionModel>? applyOptions,
-    String? jobDescription,
-    bool? jobIsRemote,
-    DateTime? jobPostedAtDatetimeUtc,
-    String? jobCity,
-    String? jobCountry,
-    List<String>? jobBenefits,
-    String? jobGoogleLink,
-    JobRequiredExperienceModel? jobRequiredExperience,
-    String? jobSalaryCurrency,
-    String? jobSalaryPeriod,
-    JobHighlightsModel? jobHighlights,
-    String? jobJobTitle,
-    String? jobPostingLanguage,
-    bool isBookmarked = false,
-  }) : super(
-          jobId: jobId,
-          employerName: employerName,
-          employerLogo: employerLogo,
-          employerWebsite: employerWebsite,
-          jobEmploymentType: jobEmploymentType,
-          jobTitle: jobTitle,
-          jobApplyLink: jobApplyLink,
-          jobApplyIsDirect: jobApplyIsDirect,
-          applyOptions: applyOptions,
-          jobDescription: jobDescription,
-          jobIsRemote: jobIsRemote,
-          jobPostedAtDatetimeUtc: jobPostedAtDatetimeUtc,
-          jobCity: jobCity,
-          jobCountry: jobCountry,
-          jobBenefits: jobBenefits,
-          jobGoogleLink: jobGoogleLink,
-          jobRequiredExperience: jobRequiredExperience,
-          jobSalaryCurrency: jobSalaryCurrency,
-          jobSalaryPeriod: jobSalaryPeriod,
-          jobHighlights: jobHighlights,
-          jobJobTitle: jobJobTitle,
-          jobPostingLanguage: jobPostingLanguage,
-          isBookmarked: isBookmarked,
-        );
+class JobModel {
+  final String jobId;
+
+  final String? employerName;
+  final String? employerLogo;
+  final String? employerWebsite;
+
+  final String? jobTitle;
+  final String? jobDescription;
+  final String? jobApplyLink;
+
+  final bool? jobIsRemote;
+  final bool? jobApplyIsDirect;
+
+  final String? jobCity;
+
+  /// API raw values
+  final String? employmentType;
+  final String? country;
+  final String? jobRequirement;
+  final String? datePosted;
+
+  final String? jobSalaryCurrency;
+  final String? jobSalaryPeriod;
+  final JobHighlightsModel? jobHighlights;
+  final List<ApplyOptionModel>? applyOptions;
+
+  final DateTime? jobPostedAtUtc;
+  final bool isBookmarked;
+
+  const JobModel({
+    required this.jobId,
+    this.employerName,
+    this.employerLogo,
+    this.employerWebsite,
+    this.jobTitle,
+    this.jobDescription,
+    this.jobApplyLink,
+    this.jobIsRemote,
+    this.jobApplyIsDirect,
+    this.jobCity,
+    this.employmentType,
+    this.country,
+    this.jobRequirement,
+    this.datePosted,
+    this.jobSalaryCurrency,
+    this.jobSalaryPeriod,
+    this.jobHighlights,
+    this.applyOptions,
+    this.jobPostedAtUtc,
+    this.isBookmarked = false,
+  });
 
   factory JobModel.fromJson(Map<String, dynamic> json) {
     return JobModel(
@@ -58,34 +65,27 @@ class JobModel extends JobEntity {
       employerName: json['employer_name'],
       employerLogo: json['employer_logo'],
       employerWebsite: json['employer_website'],
-      jobEmploymentType: json['job_employment_type'],
       jobTitle: json['job_title'],
+      jobDescription: json['job_description'],
       jobApplyLink: json['job_apply_link'],
       jobApplyIsDirect: json['job_apply_is_direct'],
-      applyOptions: (json['apply_options'] as List?)
-          ?.map((option) => ApplyOptionModel.fromJson(option))
-          .toList(),
-      jobDescription: json['job_description'],
       jobIsRemote: json['job_is_remote'],
-      jobPostedAtDatetimeUtc: json['job_posted_at_datetime_utc'] != null
-          ? DateTime.tryParse(json['job_posted_at_datetime_utc'])
-          : null,
       jobCity: json['job_city'],
-      jobCountry: json['job_country'],
-      jobBenefits: (json['job_benefits'] as List<dynamic>?)
-          ?.map((benefit) => benefit.toString())
-          .toList(),
-      jobGoogleLink: json['job_google_link'],
-      jobRequiredExperience: json['job_required_experience'] != null
-          ? JobRequiredExperienceModel.fromJson(json['job_required_experience'])
-          : null,
+      employmentType: json['job_employment_type'],
+      country: json['job_country'],
+      jobRequirement: json['job_requirement'],
+      datePosted: json['date_posted'],
       jobSalaryCurrency: json['job_salary_currency'],
       jobSalaryPeriod: json['job_salary_period'],
       jobHighlights: json['job_highlights'] != null
           ? JobHighlightsModel.fromJson(json['job_highlights'])
           : null,
-      jobJobTitle: json['job_job_title'],
-      jobPostingLanguage: json['job_posting_language'],
+      applyOptions: (json['apply_options'] as List?)
+          ?.map((e) => ApplyOptionModel.fromJson(e))
+          .toList(),
+      jobPostedAtUtc: json['job_posted_at_datetime_utc'] != null
+          ? DateTime.tryParse(json['job_posted_at_datetime_utc'])
+          : null,
       isBookmarked: json['isBookmarked'] ?? false,
     );
   }
@@ -96,26 +96,21 @@ class JobModel extends JobEntity {
       'employer_name': employerName,
       'employer_logo': employerLogo,
       'employer_website': employerWebsite,
-      'job_employment_type': jobEmploymentType,
       'job_title': jobTitle,
+      'job_description': jobDescription,
       'job_apply_link': jobApplyLink,
       'job_apply_is_direct': jobApplyIsDirect,
-      'apply_options':
-          applyOptions?.map((e) => (e as ApplyOptionModel).toJson()).toList(),
-      'job_description': jobDescription,
       'job_is_remote': jobIsRemote,
-      'job_posted_at_datetime_utc': jobPostedAtDatetimeUtc?.toIso8601String(),
       'job_city': jobCity,
-      'job_country': jobCountry,
-      'job_benefits': jobBenefits,
-      'job_google_link': jobGoogleLink,
-      'job_required_experience':
-          (jobRequiredExperience as JobRequiredExperienceModel?)?.toJson(),
+      'job_employment_type': employmentType,
+      'job_country': country,
+      'job_requirement': jobRequirement,
+      'date_posted': datePosted,
       'job_salary_currency': jobSalaryCurrency,
       'job_salary_period': jobSalaryPeriod,
-      'job_highlights': (jobHighlights as JobHighlightsModel?)?.toJson(),
-      'job_job_title': jobJobTitle,
-      'job_posting_language': jobPostingLanguage,
+      'job_highlights': jobHighlights?.toJson(),
+      'apply_options': applyOptions?.map((e) => e.toJson()).toList(),
+      'job_posted_at_datetime_utc': jobPostedAtUtc?.toIso8601String(),
       'isBookmarked': isBookmarked,
     };
   }
@@ -126,27 +121,60 @@ class JobModel extends JobEntity {
       employerName: employerName,
       employerLogo: employerLogo,
       employerWebsite: employerWebsite,
-      jobEmploymentType: jobEmploymentType,
       jobTitle: jobTitle,
+      jobDescription: jobDescription,
       jobApplyLink: jobApplyLink,
       jobApplyIsDirect: jobApplyIsDirect,
-      applyOptions:
-          applyOptions?.map((e) => (e as ApplyOptionModel).toEntity()).toList(),
-      jobDescription: jobDescription,
       jobIsRemote: jobIsRemote,
-      jobPostedAtDatetimeUtc: jobPostedAtDatetimeUtc,
       jobCity: jobCity,
-      jobCountry: jobCountry,
-      jobBenefits: jobBenefits,
-      jobGoogleLink: jobGoogleLink,
-      jobRequiredExperience:
-          (jobRequiredExperience as JobRequiredExperienceModel?)?.toEntity(),
+      employmentType: _mapEmploymentType(employmentType),
+      country: _mapCountry(country),
+      experience: _mapExperience(jobRequirement),
+      datePosted: _mapDatePosted(datePosted),
       jobSalaryCurrency: jobSalaryCurrency,
       jobSalaryPeriod: jobSalaryPeriod,
-      jobHighlights: (jobHighlights as JobHighlightsModel?)?.toEntity(),
-      jobJobTitle: jobJobTitle,
-      jobPostingLanguage: jobPostingLanguage,
+      jobHighlights: jobHighlights?.toEntity(),
+      applyOptions: applyOptions!.map((e) => e.toEntity()).toList(),
+      jobPostedAtUtc: jobPostedAtUtc,
       isBookmarked: isBookmarked,
     );
   }
+
+  EmploymentType? _mapEmploymentType(String? value) {
+    if (value == null) return null;
+    try {
+      return EmploymentType.values.firstWhere((e) => e.apiValue == value);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  JobCountry? _mapCountry(String? value) {
+    if (value == null) return null;
+    try {
+      return JobCountry.values.firstWhere((e) => e.apiValue == value);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  JobExperience? _mapExperience(String? value) {
+    if (value == null) return null;
+    try {
+      return JobExperience.values.firstWhere((e) => e.apiValue == value);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  DatePosted? _mapDatePosted(String? value) {
+    if (value == null) return null;
+    try {
+      return DatePosted.values.firstWhere((e) => e.apiValue == value);
+    } catch (_) {
+      return null;
+    }
+  }
+
+
 }

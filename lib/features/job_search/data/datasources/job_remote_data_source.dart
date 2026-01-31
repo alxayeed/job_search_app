@@ -8,8 +8,10 @@ abstract class JobRemoteDataSource {
   Future<Map<String, dynamic>> searchJobs({
     required String query,
     bool remoteJobsOnly = false,
-    String employmentType = 'FULLTIME',
-    String datePosted = 'all',
+    String? employmentType,
+    String? datePosted,
+    String? experience,
+    String? country,
   });
 
   Future<Map<String, dynamic>> getJobDetails(String jobId);
@@ -24,16 +26,20 @@ class JobRemoteDataSourceImpl implements JobRemoteDataSource {
   Future<Map<String, dynamic>> searchJobs({
     required String query,
     bool remoteJobsOnly = false,
-    String employmentType = 'FULLTIME',
-    String datePosted = 'all',
+    String? employmentType,
+    String? datePosted,
+    String? experience,
+    String? country,
   }) async {
     final Uri uri = Uri.parse(ApiConfig.searchJobs).replace(
       queryParameters: {
         'query': query,
         'num_pages': '1',
         'remote_jobs_only': remoteJobsOnly.toString(),
-        'employment_types': employmentType,
-        'date_posted': datePosted,
+        if (employmentType != null) 'employment_types': employmentType,
+        if (datePosted != null) 'date_posted': datePosted,
+        if (experience != null) 'experience': experience,
+        if (country != null) 'country': country,
       },
     );
 
@@ -55,7 +61,7 @@ class JobRemoteDataSourceImpl implements JobRemoteDataSource {
         throw e;
       } else {
         throw UnknownFailure(
-            'Unexpected error occurred while fetching job details');
+            'Unexpected error occurred while fetching jobs');
       }
     } catch (e) {
       throw UnknownFailure('Unexpected error occurred while fetching jobs');

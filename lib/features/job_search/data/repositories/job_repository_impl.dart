@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:job_search_app/features/job_search/domain/entities/job_entity.dart';
 import 'package:job_search_app/features/job_search/data/models/job_model.dart';
+import 'package:job_search_app/features/job_search/domain/enums/date_posted.dart';
+import 'package:job_search_app/features/job_search/domain/enums/employment_type.dart';
 import 'package:job_search_app/features/job_search/domain/repositories/job_repository.dart';
 
 import '../../../../core/error/failure.dart';
@@ -22,15 +24,19 @@ class JobRepositoryImpl implements JobRepository {
   Future<Either<Failure, List<JobEntity>>> searchJobs({
     required String query,
     bool remoteJobsOnly = false,
-    String employmentType = 'FULLTIME',
-    String datePosted = 'all',
+    String? employmentType,
+    String? datePosted,
+    String? experience,
+    String? country,
   }) async {
     try {
       final Map<String, dynamic> result = await remoteDataSource.searchJobs(
         query: query,
         remoteJobsOnly: remoteJobsOnly,
-        employmentType: employmentType,
-        datePosted: datePosted,
+        employmentType: employmentType ?? EmploymentType.fullTime.apiValue,
+        datePosted: datePosted ?? DatePosted.all.apiValue,
+        experience: experience,
+        country: country,
       );
 
       final List<JobModel> jobModels = (result['data'] as List)
@@ -38,7 +44,7 @@ class JobRepositoryImpl implements JobRepository {
           .toList();
 
       final List<JobEntity> jobEntities =
-          jobModels.map((model) => model.toEntity()).toList();
+      jobModels.map((model) => model.toEntity()).toList();
 
       return Right(jobEntities);
     } catch (e, stackTrace) {
@@ -47,6 +53,7 @@ class JobRepositoryImpl implements JobRepository {
       return Left(ServerFailure(e.toString()));
     }
   }
+
 
   @override
   Future<Either<Failure, JobEntity>> getJobDetails(String jobId) async {

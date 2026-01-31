@@ -7,6 +7,10 @@ import 'package:job_search_app/features/job_search/presentation/widgets/app_draw
 import 'package:job_search_app/features/job_search/presentation/widgets/job_card.dart';
 import 'package:lottie/lottie.dart';
 import '../../domain/entities/job_entity.dart';
+import '../../domain/enums/date_posted.dart';
+import '../../domain/enums/employment_type.dart';
+import '../../domain/enums/job_country.dart';
+import '../../domain/enums/job_experience.dart';
 
 final sl = GetIt.instance;
 
@@ -35,10 +39,14 @@ class JobSearchBody extends StatefulWidget {
 
 class _JobSearchBodyState extends State<JobSearchBody> {
   final TextEditingController _queryController =
-      TextEditingController(text: "Software Engineer");
+  TextEditingController(text: "Software Engineer");
   bool _remoteJobsOnly = false;
-  String _employmentType = 'FULLTIME';
-  String _datePosted = 'all';
+  EmploymentType? _employmentType = EmploymentType.fullTime;
+  DatePosted? _datePosted = DatePosted.all;
+  JobExperience? _jobExperience = JobExperience.under3Years;
+  JobCountry? _jobCountry = JobCountry.bangladesh;
+
+  bool _filtersExpanded = true;
 
   @override
   Widget build(BuildContext context) {
@@ -94,151 +102,177 @@ class _JobSearchBodyState extends State<JobSearchBody> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Search Box
-              TextField(
-                controller: _queryController,
-                onTapOutside: (event) {
-                  FocusManager.instance.primaryFocus?.unfocus();
-                },
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                  hintText: 'Search your next Job...',
-                  prefixIcon: Icon(Icons.search, color: Colors.blueAccent),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    borderSide: BorderSide.none,
+              // Search Box with Filter Icon
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _queryController,
+                      onTapOutside: (event) {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                      },
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.grey[100],
+                        hintText: 'Search your next Job...',
+                        prefixIcon: Icon(Icons.search, color: Colors.blueAccent),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+                      ),
+                      onSubmitted: (_) => _searchJobs(),
+                    ),
                   ),
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-                ),
-                onSubmitted: (_) => _searchJobs(),
-              ),
-              SizedBox(height: 10),
-
-              // Remote Jobs Filter
-              SwitchListTile(
-                title: Text('Remote Jobs Only',
-                    style: TextStyle(color: Colors.blueAccent)),
-                value: _remoteJobsOnly,
-                onChanged: (bool selected) {
-                  setState(() {
-                    _remoteJobsOnly = selected;
-                  });
-                },
-                activeColor: Colors.blueAccent,
-                contentPadding: EdgeInsets.zero,
-              ),
-              SizedBox(height: 10),
-
-              // Employment Type Filter
-              DropdownButtonFormField<String>(
-                value: _employmentType,
-                items: [
-                  DropdownMenuItem(
-                    child: Text('Full-Time',
-                        style: TextStyle(color: Colors.blueAccent)),
-                    value: 'FULLTIME',
-                  ),
-                  DropdownMenuItem(
-                    child: Text('Part-Time',
-                        style: TextStyle(color: Colors.blueAccent)),
-                    value: 'PARTTIME',
-                  ),
-                  DropdownMenuItem(
-                    child: Text('Contract',
-                        style: TextStyle(color: Colors.blueAccent)),
-                    value: 'CONTRACT',
+                  IconButton(
+                    icon: Icon(
+                      _filtersExpanded ? Icons.filter_alt_off : Icons.filter_alt,
+                      color: Colors.blueAccent,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _filtersExpanded = !_filtersExpanded;
+                      });
+                    },
                   ),
                 ],
-                onChanged: (value) {
-                  setState(() {
-                    _employmentType = value!;
-                  });
-                },
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
               ),
               SizedBox(height: 10),
 
-              // Date Posted Filter
-              DropdownButtonFormField<String>(
-                value: _datePosted,
-                items: [
-                  DropdownMenuItem(
-                    child:
-                        Text('All', style: TextStyle(color: Colors.blueAccent)),
-                    value: 'all',
-                  ),
-                  DropdownMenuItem(
-                    child: Text('Today',
-                        style: TextStyle(color: Colors.blueAccent)),
-                    value: 'today',
-                  ),
-                  DropdownMenuItem(
-                    child: Text('3 Days',
-                        style: TextStyle(color: Colors.blueAccent)),
-                    value: '3days',
-                  ),
-                  DropdownMenuItem(
-                    child: Text('Week',
-                        style: TextStyle(color: Colors.blueAccent)),
-                    value: 'week',
-                  ),
-                  DropdownMenuItem(
-                    child: Text('Month',
-                        style: TextStyle(color: Colors.blueAccent)),
-                    value: 'month',
-                  ),
-                ],
-                onChanged: (value) {
-                  setState(() {
-                    _datePosted = value!;
-                  });
-                },
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    borderSide: BorderSide.none,
-                  ),
+              // Filters Section (Expandable)
+              if (_filtersExpanded) ...[
+                SwitchListTile(
+                  title: Text('Remote Jobs Only',
+                      style: TextStyle(color: Colors.blueAccent)),
+                  value: _remoteJobsOnly,
+                  onChanged: (bool selected) {
+                    setState(() {
+                      _remoteJobsOnly = selected;
+                    });
+                  },
+                  activeThumbColor: Colors.blueAccent,
+                  contentPadding: EdgeInsets.zero,
                 ),
-              ),
-              SizedBox(height: 10),
-
-              // Search Button
-              Center(
-                child: ElevatedButton(
-                  onPressed: _searchJobs,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                    shape: RoundedRectangleBorder(
+                SizedBox(height: 10),
+                DropdownButtonFormField<EmploymentType>(
+                  initialValue: _employmentType,
+                  items: EmploymentType.values.map((type) {
+                    return DropdownMenuItem(
+                      value: type,
+                      child: Text(type.label, style: TextStyle(color: Colors.blueAccent)),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _employmentType = value;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey[100],
+                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    elevation: 5,
-                  ),
-                  child: Text(
-                    'Search',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                      borderSide: BorderSide.none,
                     ),
                   ),
                 ),
-              ),
+                SizedBox(height: 10),
+                DropdownButtonFormField<DatePosted>(
+                  initialValue: _datePosted,
+                  items: DatePosted.values.map((date) {
+                    return DropdownMenuItem(
+                      value: date,
+                      child: Text(date.label, style: TextStyle(color: Colors.blueAccent)),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _datePosted = value;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey[100],
+                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                DropdownButtonFormField<JobExperience>(
+                  initialValue: _jobExperience,
+                  items: JobExperience.values.map((exp) {
+                    return DropdownMenuItem(
+                      value: exp,
+                      child: Text(exp.label, style: TextStyle(color: Colors.blueAccent)),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _jobExperience = value;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey[100],
+                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                DropdownButtonFormField<JobCountry>(
+                  initialValue: _jobCountry,
+                  items: JobCountry.values.map((country) {
+                    return DropdownMenuItem(
+                      value: country,
+                      child: Text(country.label, style: TextStyle(color: Colors.blueAccent)),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _jobCountry = value;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey[100],
+                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: _searchJobs,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      elevation: 5,
+                    ),
+                    child: Text(
+                      'Search',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ),
@@ -275,6 +309,8 @@ class _JobSearchBodyState extends State<JobSearchBody> {
         remoteJobsOnly: _remoteJobsOnly,
         employmentType: _employmentType,
         datePosted: _datePosted,
+        jobExperience: _jobExperience,
+        jobCountry: _jobCountry,
       ),
     );
   }

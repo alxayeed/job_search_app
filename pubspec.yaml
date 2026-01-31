@@ -28,6 +28,7 @@ dependencies:
   path_provider: ^2.1.4
   get_storage: ^2.1.1
   package_info_plus: ^9.0.0
+  freezed_annotation: ^3.1.0
 #  isar: ^3.1.0+1
 #  isar_flutter_libs: ^3.1.0+1
 
@@ -36,7 +37,8 @@ dev_dependencies:
     sdk: flutter
   bloc_test: ^9.1.7
   mockito: ^5.4.4
-  build_runner: ^2.4.9
+  build_runner: ^2.10.5
+  freezed: ^3.2.3
 #  isar_generator: ^3.1.0+1
 
 flutter:

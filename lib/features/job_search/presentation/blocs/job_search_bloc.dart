@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
+import 'package:job_search_app/features/job_search/domain/enums/job_country.dart';
 import 'package:job_search_app/features/job_search/presentation/blocs/blocs.dart';
 import '../../../../core/error/failure.dart';
 import '../../domain/entities/job_entity.dart';
@@ -32,14 +33,17 @@ class JobSearchBloc extends Bloc<JobSearchEvent, JobSearchState> {
       query: event.query,
       remoteJobsOnly: event.remoteJobsOnly,
       employmentType: event.employmentType,
-      datePosted: event.datePosted,
+      datePosted: event.datePosted!,
+      experience: event.jobExperience!,
+      country: event.jobCountry!,
     );
 
     result.fold(
-      (failure) => emit(JobSearchError(failure)),
-      (jobs) => emit(JobSearchLoaded(jobs)),
+          (failure) => emit(JobSearchError(failure)),
+          (jobs) => emit(JobSearchLoaded(jobs)),
     );
   }
+
 
   Future<void> _onJobDetailsRequested(
       JobDetailsRequested event, Emitter<JobSearchState> emit) async {

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:job_search_app/core/services/app_info_service.dart';
-import 'package:job_search_app/features/job_search/presentation/screens/job_search_screen.dart';
 import 'package:job_search_app/features/job_search/presentation/screens/bookmarked_jobs_screen.dart';
 import '../../../../core/screens/settings_screen.dart';
 import '../../../salary_estimation/presentation/pages/salary_estimation_screen.dart';
+import '../screens/job_search_screen.dart';
+import '../screens/job_search_screen_new.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -45,6 +46,18 @@ class AppDrawer extends StatelessWidget {
                     );
                   },
                 ),
+                // ListTile(
+                //   leading: const Icon(Icons.search),
+                //   title: const Text('Search Job(New)'),
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //         builder: (_) => JobSearchScreenNew(),
+                //       ),
+                //     );
+                //   },
+                // ),
                 ListTile(
                   leading: const Icon(Icons.monetization_on),
                   title: const Text('Salary Estimation'),
