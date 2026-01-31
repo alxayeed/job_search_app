@@ -1,10 +1,7 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/error/failure.dart';
 import '../entities/job_entity.dart';
-import '../enums/employment_type.dart';
-import '../enums/date_posted.dart';
-import '../enums/job_experience.dart';
-import '../enums/job_country.dart';
+import '../entities/job_filter_entity.dart';
 import '../repositories/job_repository.dart';
 
 class FetchJobsUseCase {
@@ -14,19 +11,16 @@ class FetchJobsUseCase {
 
   Future<Either<Failure, List<JobEntity>>> call({
     required String query,
-    bool remoteJobsOnly = false,
-    EmploymentType? employmentType,
-    DatePosted? datePosted,
-    JobExperience? experience,
-    JobCountry? country,
+    JobFilterEntity? filters,
   }) async {
-    return await repository.searchJobs(
+    return repository.searchJobs(
       query: query,
-      remoteJobsOnly: remoteJobsOnly,
-      employmentType: employmentType!.apiValue,
-      datePosted: datePosted!.apiValue,
-      experience: experience?.apiValue,
-      country: country?.apiValue,
+      remoteJobsOnly: filters?.remoteJobsOnly ?? false,
+      employmentType: filters?.employmentType?.apiValue,
+      datePosted: filters?.datePosted?.apiValue,
+      experience: filters?.jobExperience?.apiValue,
+      country: filters?.jobCountry?.apiValue,
+      radius: filters?.radius,
     );
   }
 }

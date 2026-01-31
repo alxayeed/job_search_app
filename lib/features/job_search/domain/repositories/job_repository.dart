@@ -2,10 +2,6 @@ import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/failure.dart';
 import '../entities/job_entity.dart';
-import '../enums/date_posted.dart';
-import '../enums/employment_type.dart';
-import '../enums/job_country.dart';
-import '../enums/job_experience.dart';
 
 /// Manages job search operations.
 abstract class JobRepository {
@@ -26,6 +22,7 @@ abstract class JobRepository {
     String? datePosted,
     String? experience,
     String? country,
+    double? radius,
   });
 
   /// Retrieves job details for a specific job ID.

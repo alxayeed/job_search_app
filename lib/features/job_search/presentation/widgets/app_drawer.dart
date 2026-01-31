@@ -4,7 +4,6 @@ import 'package:job_search_app/features/job_search/presentation/screens/bookmark
 import '../../../../core/screens/settings_screen.dart';
 import '../../../salary_estimation/presentation/pages/salary_estimation_screen.dart';
 import '../screens/job_search_screen.dart';
-import '../screens/job_search_screen_new.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -42,18 +41,6 @@ class AppDrawer extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (_) => JobSearchScreen(),
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.search),
-                  title: const Text('Search Job(New)'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => JobSearchScreenNew(),
                       ),
                     );
                   },

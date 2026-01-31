@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
-import 'package:job_search_app/features/job_search/domain/enums/job_country.dart';
 import 'package:job_search_app/features/job_search/presentation/blocs/blocs.dart';
 import '../../../../core/error/failure.dart';
 import '../../domain/entities/job_entity.dart';
@@ -26,16 +25,22 @@ class JobSearchBloc extends Bloc<JobSearchEvent, JobSearchState> {
   }
 
   Future<void> _onJobSearchRequested(
-      SearchJobsEvent event, Emitter<JobSearchState> emit) async {
+      SearchJobsEvent event,
+      Emitter<JobSearchState> emit,
+      ) async {
     emit(JobSearchLoading());
 
-    final Either<Failure, List<JobEntity>> result = await searchJobs(
+    final filters = event.filters;
+
+    final result = await searchJobs(
       query: event.query,
-      remoteJobsOnly: event.remoteJobsOnly,
-      employmentType: event.employmentType,
-      datePosted: event.datePosted!,
-      experience: event.jobExperience!,
-      country: event.jobCountry!,
+      filters: filters,
+      // remoteJobsOnly: filters?.remoteJobsOnly ?? false,
+      // employmentType: event.employmentType,
+      // datePosted: event.datePosted,
+      // experience: event.jobExperience,
+      // country: event.jobCountry,
+      // radius: filters?.radius,
     );
 
     result.fold(
@@ -43,6 +48,7 @@ class JobSearchBloc extends Bloc<JobSearchEvent, JobSearchState> {
           (jobs) => emit(JobSearchLoaded(jobs)),
     );
   }
+
 
 
   Future<void> _onJobDetailsRequested(

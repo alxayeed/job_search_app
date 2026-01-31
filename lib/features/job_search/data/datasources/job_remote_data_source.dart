@@ -12,6 +12,7 @@ abstract class JobRemoteDataSource {
     String? datePosted,
     String? experience,
     String? country,
+    double? radius,
   });
 
   Future<Map<String, dynamic>> getJobDetails(String jobId);
@@ -30,45 +31,47 @@ class JobRemoteDataSourceImpl implements JobRemoteDataSource {
     String? datePosted,
     String? experience,
     String? country,
+    double? radius,
   }) async {
-    final Uri uri = Uri.parse(ApiConfig.searchJobs).replace(
-      queryParameters: {
-        'query': query,
-        'num_pages': '1',
-        'remote_jobs_only': remoteJobsOnly.toString(),
-        if (employmentType != null) 'employment_types': employmentType,
-        if (datePosted != null) 'date_posted': datePosted,
-        if (experience != null) 'experience': experience,
-        if (country != null) 'country': country,
-      },
-    );
+    final params = <String, dynamic>{
+      'query': query,
+      'num_pages': 1,
+    };
+
+    if (remoteJobsOnly) params['remote_jobs_only'] = true;
+    if (employmentType != null) params['employment_types'] = employmentType;
+    if (datePosted != null) params['date_posted'] = datePosted;
+    if (experience != null) params['experience'] = experience;
+    if (country != null) params['country'] = country;
+    if (radius != null) params['radius'] = radius.toString();
 
     final storageService = sl<GetStorageService>();
     final box = storageService.jobResultsBox;
-
-    var cachedResponse = box.read("job_results");
+    final cachedResponse = box.read('job_results');
 
     try {
-      final response = await dio.getUri(uri);
+      final response = await dio.get(
+        ApiConfig.searchJobs,
+        queryParameters: params,
+      );
+
       if (response.statusCode == 200) {
-        box.write("job_results", response.data);
+        box.write('job_results', response.data);
         return response.data;
       } else {
         throw ServerFailure('Failed to load jobs');
       }
     } on DioException catch (e) {
-      if (e.error is Failure) {
-        throw e;
-      } else {
-        throw UnknownFailure(
-            'Unexpected error occurred while fetching jobs');
-      }
-    } catch (e) {
+      throw e.error is Failure
+          ? e.error!
+          : UnknownFailure('Unexpected error occurred while fetching jobs');
+    } catch (_) {
       throw UnknownFailure('Unexpected error occurred while fetching jobs');
     } finally {
-      return cachedResponse;
+      if (cachedResponse != null) return cachedResponse;
     }
   }
+
 
   @override
   Future<Map<String, dynamic>> getJobDetails(String jobId) async {

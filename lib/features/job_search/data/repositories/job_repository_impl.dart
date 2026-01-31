@@ -28,15 +28,17 @@ class JobRepositoryImpl implements JobRepository {
     String? datePosted,
     String? experience,
     String? country,
+    double? radius,
   }) async {
     try {
       final Map<String, dynamic> result = await remoteDataSource.searchJobs(
         query: query,
         remoteJobsOnly: remoteJobsOnly,
-        employmentType: employmentType ?? EmploymentType.fullTime.apiValue,
-        datePosted: datePosted ?? DatePosted.all.apiValue,
+        employmentType: employmentType,
+        datePosted: datePosted ,
         experience: experience,
         country: country,
+        radius: radius,
       );
 
       final List<JobModel> jobModels = (result['data'] as List)

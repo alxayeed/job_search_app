@@ -11,7 +11,7 @@ class JobFilterEntity {
   final DatePosted? datePosted;
   final JobExperience? jobExperience;
   final JobCountry? jobCountry;
-  final double radius;
+  final double? radius;
 
   JobFilterEntity({
     this.remoteJobsOnly = false,
@@ -19,7 +19,7 @@ class JobFilterEntity {
     this.datePosted,
     this.jobExperience,
     this.jobCountry,
-    this.radius = 25.0,
+    this.radius,
   });
 
   JobFilterEntity copyWith({

@@ -46,4 +46,5 @@ flutter:
   assets:
     - .env
     - assets/loading.json
+    - assets/search_job.json
     - assets/fake_response/search_jobs.json
