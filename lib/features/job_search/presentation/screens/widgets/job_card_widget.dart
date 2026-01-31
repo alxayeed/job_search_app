@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../domain/entities/job_entity.dart';
 import '../../../domain/enums/job_experience.dart';
+import '../job_details_screen.dart';
 
 class JobCardWidgetNew extends StatelessWidget {
   final JobEntity job;
-  final VoidCallback? onTap;
   final VoidCallback? onBookmarkTap;
 
   const JobCardWidgetNew({
     Key? key,
     required this.job,
-    this.onTap,
     this.onBookmarkTap,
   }) : super(key: key);
 
@@ -46,7 +45,14 @@ class JobCardWidgetNew extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => JobDetailsScreen(jobEntity: job),
+          ),
+        );
+      },
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 8),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
